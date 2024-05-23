@@ -1,16 +1,48 @@
-# nite_life
+# NiteLife
 
-A new Flutter project.
+NiteLife is an app that is dedicated to promoting events on college campuses. 
 
-## Getting Started
+## Table of Contents
 
-This project is a starting point for a Flutter application.
+- [NiteLife](#nitelife)
+  - [Table of Contents](#table-of-contents)
+  - [Features](#features)
+  - [Installation](#installation)
+  - [Usage](#usage)
+  - [Contributing](#contributing)
+  - [License](#license)
+  - [Acknowledgements](#acknowledgements)
 
-A few resources to get you started if this is your first Flutter project:
+## Features
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+- Discover "events" campus wide
+- Leave reviews and ratings
+- See what's popping
+- Check what music is playing
+- Social features to share your experiences
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## Installation
+
+- Currently for IOS only
+
+## Usage
+
+- For the people looking for things to do
+
+## Contributing
+
+- Just myself at the moment
+
+## License
+
+- uhhhhhh
+
+## Acknowledgments
+
+- Myself
+
+
+### Prerequisites
+
+- [Flutter](https://flutter.dev/docs/get-started/install) installed
+- [Firebase](https://firebase.google.com/) project set up
