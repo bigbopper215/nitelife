@@ -1,6 +1,6 @@
 # NiteLife
 
-NiteLife is an app that is dedicated to promoting events on college campuses. 
+NiteLife is an app that is dedicated to promoting "events" on college campuses. 
 
 ## Table of Contents
 
