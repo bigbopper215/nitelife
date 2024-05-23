@@ -15,34 +15,47 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   final TextEditingController emailController = TextEditingController();
-
   final TextEditingController passwordController = TextEditingController();
+
+  bool _hasError = false;
+  String _errorMessage = "";
 
   // login method
   void login() async {
     // show loading circle
     showDialog(
-      context: context, 
+      context: context,
       builder: (context) => const Center(
         child: CircularProgressIndicator(),
       ),
     );
 
     try {
-      await FirebaseAuth.instance.signInWithEmailAndPassword(email: emailController.text, password: passwordController.text);
+      await FirebaseAuth.instance.signInWithEmailAndPassword(
+          email: emailController.text, password: passwordController.text);
 
       // pop loading circle
       if (context.mounted) Navigator.pop(context);
+
+      // Reset error message on successful login
+      setState((){
+        _hasError = false;
+        _errorMessage = "";
+      });
     }
 
     // display any errors
     on FirebaseAuthException catch (e) {
       // pop loading circle
       Navigator.pop(context);
-      displayMessageToUser(e.code, context);
+      // displayMessageToUser(e.code, context);
+
+      // Set the error message
+      setState(() {
+        _hasError = true;
+        _errorMessage = e.code;
+      });
     }
-
-
   }
 
   @override
@@ -91,11 +104,22 @@ class _LoginPageState extends State<LoginPage> {
 
               // forgot password
               Row(
-                mainAxisAlignment: MainAxisAlignment.end,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text("Forgot Password?",
+                  Flexible(
+                    child: Text(
+                      _errorMessage,
                       style: TextStyle(
-                          color: Theme.of(context).colorScheme.inversePrimary)),
+                        color: Colors.red,
+                      ),
+                    ),
+                  ),
+                  Text(
+                    "Forgot Password?",
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.inversePrimary,
+                    ),
+                  ),
                 ],
               ),
 

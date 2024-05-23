@@ -20,6 +20,9 @@ class _RegisterPageState extends State<RegisterPage> {
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController confirmPwController = TextEditingController();
 
+  bool _hasError = false;
+  String _errorMessage = "";
+
   // register method
   void registerUser() async {
     // show loading circle
@@ -36,7 +39,11 @@ class _RegisterPageState extends State<RegisterPage> {
       Navigator.pop(context);
 
       // show error message to user
-      displayMessageToUser("Passwords don't Match!", context);
+      //displayMessageToUser("Passwords don't Match!", context);
+      setState(() {
+          _hasError = false;
+          _errorMessage = "Passwords don't Match!";
+        });
     } 
     // if passwords do match
     else {
@@ -49,13 +56,26 @@ class _RegisterPageState extends State<RegisterPage> {
         );
 
         // pop loading circle
-        Navigator.pop(context);
+        if (context.mounted) Navigator.pop(context);
+
+        // Reset error message on successful registery
+        setState(() {
+          _hasError = false;
+          _errorMessage = "";
+        });
+        
       } on FirebaseAuthException catch (e) {
         // pop loading circle
         Navigator.pop(context);
 
         // display error message to user
-        displayMessageToUser(e.code, context);
+        //displayMessageToUser(e.code, context);
+
+        // Set the error message
+        setState(() {
+          _hasError = true;
+          _errorMessage = e.code;
+        });
       }
     }
   }
@@ -123,12 +143,24 @@ class _RegisterPageState extends State<RegisterPage> {
               const SizedBox(height: 10),
 
               // forgot password
+              // forgot password
               Row(
-                mainAxisAlignment: MainAxisAlignment.end,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text("Forgot Password?",
+                  Flexible(
+                    child: Text(
+                      _errorMessage,
                       style: TextStyle(
-                          color: Theme.of(context).colorScheme.inversePrimary)),
+                        color: Colors.red,
+                      ),
+                    ),
+                  ),
+                  Text(
+                    "Forgot Password?",
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.inversePrimary,
+                    ),
+                  ),
                 ],
               ),
 

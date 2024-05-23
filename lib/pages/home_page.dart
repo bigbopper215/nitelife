@@ -44,6 +44,7 @@ class _HomePageState extends State<HomePage> {
 
   // logout user
   void logout() {
+    Navigator.pop(context);
     FirebaseAuth.instance.signOut();
   }
 
