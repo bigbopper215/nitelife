@@ -13,38 +13,36 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   final FirestoreService firestoreService = FirestoreService();
 
-  final TextEditingController textController = TextEditingController();
+  final TextEditingController titleController = TextEditingController();
+  final TextEditingController descriptionController = TextEditingController();
+
+
+  int _currentIndex = 0;
 
   void openNoteBox({String? docID}) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        content: TextField(
-          controller: textController,
+        content: SingleChildScrollView(
+          child: Column(
+            children: [
+              TextField(
+                controller: titleController,
+                decoration: const InputDecoration(labelText: 'Title'),
+              ),
+              TextField(
+                controller: descriptionController,
+                decoration: const InputDecoration(labelText: 'Description'),
+              ),
+            ],
+          ),
         ),
-        actions: [
-          ElevatedButton(
-            onPressed: () {
-              if (docID == null) {
-                firestoreService.addNote(textController.text);
-              } else {
-                firestoreService.updateNote(docID, textController.text);
-              }
-
-              textController.clear();
-
-              Navigator.pop(context);
-            },
-            child: Text("Add"),
-          )
-        ],
-      ),
+      )
     );
   }
 
   // logout user
   void logout() {
-    Navigator.pop(context);
     FirebaseAuth.instance.signOut();
   }
 
@@ -53,18 +51,39 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Vassar NiteLife"),
-        backgroundColor: Color.fromARGB(255, 120, 13, 5),
+        backgroundColor: Color.fromARGB(148, 176, 17, 17),
         actions: [
           // logout button
           IconButton(
-            onPressed: logout, 
+            onPressed: logout,
             icon: Icon(Icons.logout),
           ),
         ],
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: openNoteBox,
-        child: const Icon(Icons.add),
+      // body: tabs[_currentIndex],
+
+
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _currentIndex,
+        onTap: (int newIndex) {
+          setState(() {
+            _currentIndex = newIndex;
+          });
+        },
+        items: const [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home),
+            label: 'Home',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.add),
+            label: 'Post',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.person),
+            label: 'Profile',
+          ),
+        ],
       ),
       body: StreamBuilder<QuerySnapshot>(
         stream: firestoreService.getNotesStream(),
@@ -91,7 +110,6 @@ class _HomePageState extends State<HomePage> {
                           onPressed: () => openNoteBox(docID: docID),
                           icon: const Icon(Icons.settings),
                         ),
-
                         IconButton(
                           onPressed: () => firestoreService.deleteNote(docID),
                           icon: const Icon(Icons.delete),
