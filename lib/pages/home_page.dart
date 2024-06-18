@@ -107,6 +107,12 @@ class _HomePageState extends State<HomePage> {
                 'location': locationController.text,
                 'date': selectedDate?.toIso8601String(),
                 'time': selectedTime?.format(context),
+
+                //Store the creator's ID
+                'creatorID': FirebaseAuth.instance.currentUser?.uid,
+
+                //Keep track of when event was added
+                'timestamp': FieldValue.serverTimestamp(),
               };
 
               if (docID == null) {
@@ -186,19 +192,39 @@ class _HomePageState extends State<HomePage> {
           if (snapshot.hasData) {
             List<DocumentSnapshot> notesList = snapshot.data!.docs;
 
+            // makes the most recent event added appear at the top of the list
+            // notesList = notesList.reversed.toList();
+
             return ListView.builder(
               itemCount: notesList.length,
               itemBuilder: (context, index) {
                 DocumentSnapshot document = notesList[index];
                 String docID = document.id;
 
-                Map<String, dynamic> data =
-                    document.data() as Map<String, dynamic>;
+                Map<String, dynamic> data = document.data() as Map<String, dynamic>;
+
                 String noteText = data['note'] ?? 'No note available';
 
+                String title = data['title'] ?? 'No Title';
+                String description = data['description'] ?? 'No Desceription';
+                String location = data['location'] ?? 'No Location';
+                String date = data['date'] ?? 'No Date';
+                String time = data['time'] ?? 'No Time';
+
+                bool isCreator = data['creatorID'] == FirebaseAuth.instance.currentUser?.uid;
+
                 return ListTile(
-                    title: Text(noteText),
-                    trailing: Row(
+                    title: Text(title),
+                    subtitle: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('Description: $description'),
+                        Text('Location: $location'),
+                        Text('Date: $date'),
+                        Text('Time: $time'),
+                      ],
+                      ),
+                    trailing: isCreator? Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         IconButton(
@@ -210,7 +236,8 @@ class _HomePageState extends State<HomePage> {
                           icon: const Icon(Icons.delete),
                         ),
                       ],
-                    ));
+                    ) : null,
+                  );
               },
             );
           } else if (snapshot.hasError) {

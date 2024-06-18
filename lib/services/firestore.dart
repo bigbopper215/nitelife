@@ -5,24 +5,22 @@ class FirestoreService {
   //final CollectionReference notes = 
     //FirebaseFirestore.instance.collection('notes');
 
-  final FirebaseFirestore _db = FirebaseFirestore.instance;
+  final CollectionReference notesCollection = FirebaseFirestore.instance.collection('notes');
 
   Future<void> addNote(Map<String, dynamic> noteData) async {
-    noteData.removeWhere((key, value) => value == null);
-    await _db.collection('notes').add(noteData);
+    await notesCollection.add(noteData);
   }
 
    Future<void> updateNote(String docID, Map<String, dynamic> noteData) async {
-    noteData.removeWhere((key, value) => value == null);
-    await _db.collection('notes').doc(docID).update(noteData);
+    await notesCollection.doc(docID).update(noteData);
   }
 
   Stream<QuerySnapshot> getNotesStream() {
-    return _db.collection('notes').snapshots();
+    return notesCollection.orderBy('timestamp', descending: true).snapshots();
   }
 
   Future<void> deleteNote(String docID) async {
-    await _db.collection('notes').doc(docID).delete();
+    await notesCollection.doc(docID).delete();
   }
 
 }
