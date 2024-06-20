@@ -59,7 +59,8 @@ class _HomePageState extends State<HomePage> {
     const Placeholder(),
     const ProfilePage(),
   ];
-
+  
+  //opens a box to add an event
   void openNoteBox({String? docID}) {
     showDialog(
       context: context,
@@ -140,6 +141,89 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+  void editEvent(
+    String docID,
+    String title,
+    String description,
+    String location,
+    String date,
+    String time,
+  ) {
+    titleController.text = title;
+    descriptionController.text = description;
+    locationController.text = location;
+    selectedDate = DateTime.parse(date);
+    dateController.text = DateFormat('yyyy-MM-dd').format(selectedDate!);
+    selectedTime = TimeOfDay.fromDateTime(DateFormat.jm().parse(time));
+    timeController.text = time;
+
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        content: SingleChildScrollView(
+          child: Column(
+            children: [
+              TextField(
+                controller: titleController,
+                decoration: const InputDecoration(labelText: 'Title'),
+              ),
+              TextField(
+                controller: descriptionController,
+                decoration: const InputDecoration(labelText: 'Description'),
+              ),
+              TextField(
+                controller: locationController,
+                decoration: const InputDecoration(labelText: 'Location'),
+              ),
+              TextField(
+                controller: dateController,
+                readOnly: true,
+                decoration: const InputDecoration(
+                  labelText: 'Date',
+                  hintText: 'Select Date',
+                ),
+                onTap: () => _selectDate(context),
+              ),
+              TextField(
+                controller: timeController,
+                readOnly: true,
+                decoration: const InputDecoration(
+                  labelText: 'Time',
+                  hintText: 'Select Time',
+                ),
+                onTap: () => _selectTime(context),
+              ),
+            ],
+          ),
+        ),
+        actions: [
+          ElevatedButton(
+            onPressed: () {
+              final noteData = {
+                'title': titleController.text,
+                'description': descriptionController.text,
+                'location': locationController.text,
+                'date': selectedDate?.toIso8601String(),
+                'time': selectedTime?.format(context),
+
+                // Store the creator's ID
+                'creatorID': FirebaseAuth.instance.currentUser?.uid,
+
+                // Keep track of when event was added
+                'timestamp': FieldValue.serverTimestamp(),
+              };
+
+              firestoreService.updateNote(docID, noteData);
+
+              Navigator.pop(context);
+            },
+            child: const Text("Save"),
+          )
+        ],
+      ),
+    );
+  }
+
   // logout user
   void logout() {
     FirebaseAuth.instance.signOut();
@@ -193,7 +277,14 @@ class _HomePageState extends State<HomePage> {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     IconButton(
-                      onPressed: () => openNoteBox(docID: docID),
+                      onPressed: () => editEvent(
+                        docID,
+                        title,
+                        description,
+                        location,
+                        date,
+                        time,
+                      ),
                       icon: const Icon(Icons.settings),
                     ),
                     IconButton(
