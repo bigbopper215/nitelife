@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:nite_life/pages/profile_page.dart';
 import 'package:nite_life/services/firestore.dart';
 
 class HomePage extends StatefulWidget {
@@ -55,7 +56,8 @@ class _HomePageState extends State<HomePage> {
 
   final tabs = [
     const HomePage(),
-    // const ProfilePage(),
+    const Placeholder(),
+    const ProfilePage(),
   ];
 
   void openNoteBox({String? docID}) {
@@ -143,6 +145,76 @@ class _HomePageState extends State<HomePage> {
     FirebaseAuth.instance.signOut();
   }
 
+  Widget _buildHomePage() {
+    return StreamBuilder<QuerySnapshot>(
+      stream: firestoreService.getNotesStream(),
+      builder: (context, snapshot) {
+        if(snapshot.hasData) {
+          List<DocumentSnapshot> notesList = snapshot.data!.docs;
+
+          // sort notes by timestamp in descending order
+          notesList.sort((a, b){
+            Timestamp aTimestamp = a['timestamp'] ?? Timestamp.now();
+            Timestamp bTimestamp = b['timestamp'] ?? Timestamp.now();
+            return bTimestamp.compareTo(aTimestamp);
+          });
+
+          return ListView.builder(
+            itemCount: notesList.length,
+            itemBuilder: (context, index) {
+              DocumentSnapshot document = notesList[index];
+              String docID = document.id;
+
+              Map<String, dynamic> data = document.data() as Map<String, dynamic>;
+
+              String title = data['title'] ?? 'No Title';
+              String description = data['description'] ?? 'No Description';
+              String location = data['location'] ?? 'No Location';
+              String date = data['date'] != null
+                  ? DateFormat('yyyy-MM-dd').format(DateTime.parse(data['date']))
+                  : 'No Date';
+              String time = data['time'] ?? 'No Time';
+
+              bool isCreator = data['creatorID'] == FirebaseAuth.instance.currentUser?.uid;
+
+              return ListTile(
+                title: Text(title),
+                subtitle: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('Description: $description'),
+                    Text('Location: $location'),
+                    Text('Date: $date'),
+                    Text('Time: $time'),
+                  ],
+                ),
+                trailing: isCreator
+                ? Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    IconButton(
+                      onPressed: () => openNoteBox(docID: docID),
+                      icon: const Icon(Icons.settings),
+                    ),
+                    IconButton(
+                      onPressed: () => firestoreService.deleteNote(docID),
+                      icon: const Icon(Icons.delete),
+                    ),
+                  ],
+                )
+                : null,
+              );
+            },
+          );
+        } else if (snapshot.hasError) {
+          return const Center(child: Text("Error loading events"));
+        } else {
+          return const Center(child: CircularProgressIndicator());
+        }
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -157,7 +229,14 @@ class _HomePageState extends State<HomePage> {
           ),
         ],
       ),
-      // body: tabs[_currentIndex],
+      body: IndexedStack(
+        index: _currentIndex,
+        children: [
+          _buildHomePage(),
+          const Placeholder(),
+          const ProfilePage(),
+        ],
+      ),
 
 
       bottomNavigationBar: BottomNavigationBar(
@@ -185,67 +264,6 @@ class _HomePageState extends State<HomePage> {
             label: 'Profile',
           ),
         ],
-      ),
-      body: StreamBuilder<QuerySnapshot>(
-        stream: firestoreService.getNotesStream(),
-        builder: (context, snapshot) {
-          if (snapshot.hasData) {
-            List<DocumentSnapshot> notesList = snapshot.data!.docs;
-
-            // makes the most recent event added appear at the top of the list
-            // notesList = notesList.reversed.toList();
-
-            return ListView.builder(
-              itemCount: notesList.length,
-              itemBuilder: (context, index) {
-                DocumentSnapshot document = notesList[index];
-                String docID = document.id;
-
-                Map<String, dynamic> data = document.data() as Map<String, dynamic>;
-
-                String noteText = data['note'] ?? 'No note available';
-
-                String title = data['title'] ?? 'No Title';
-                String description = data['description'] ?? 'No Desceription';
-                String location = data['location'] ?? 'No Location';
-                String date = data['date'] ?? 'No Date';
-                String time = data['time'] ?? 'No Time';
-
-                bool isCreator = data['creatorID'] == FirebaseAuth.instance.currentUser?.uid;
-
-                return ListTile(
-                    title: Text(title),
-                    subtitle: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text('Description: $description'),
-                        Text('Location: $location'),
-                        Text('Date: $date'),
-                        Text('Time: $time'),
-                      ],
-                      ),
-                    trailing: isCreator? Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        IconButton(
-                          onPressed: () => openNoteBox(docID: docID),
-                          icon: const Icon(Icons.settings),
-                        ),
-                        IconButton(
-                          onPressed: () => firestoreService.deleteNote(docID),
-                          icon: const Icon(Icons.delete),
-                        ),
-                      ],
-                    ) : null,
-                  );
-              },
-            );
-          } else if (snapshot.hasError) {
-            return const Center(child: Text("Error loading notes"));
-          } else {
-            return const Center(child: CircularProgressIndicator());
-          }
-        },
       ),
     );
   }
