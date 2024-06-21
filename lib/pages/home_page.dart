@@ -26,6 +26,8 @@ class _HomePageState extends State<HomePage> {
 
   int _currentIndex = 0;
 
+  String _errorMessage = "Fill in all fields";
+
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
       context: context,
@@ -37,6 +39,7 @@ class _HomePageState extends State<HomePage> {
       setState(() {
         selectedDate = picked;
         dateController.text = DateFormat('yyyy-MM-dd').format(picked);
+        _errorMessage = "";
       });
     }
   }
@@ -50,6 +53,7 @@ class _HomePageState extends State<HomePage> {
       setState(() {
         selectedTime = picked;
         timeController.text = picked.format(context);
+        _errorMessage = "";
       });
     }
   }
@@ -59,9 +63,21 @@ class _HomePageState extends State<HomePage> {
     const Placeholder(),
     const ProfilePage(),
   ];
-  
+
   //opens a box to add an event
   void openNoteBox({String? docID}) {
+    setState(() {
+      _errorMessage = ""; //clears the error message when opening the dialogue
+    });
+
+    titleController.clear();
+    descriptionController.clear();
+    locationController.clear();
+    dateController.clear();
+    timeController.clear();
+    selectedDate = null;
+    selectedTime = null;
+
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -98,12 +114,32 @@ class _HomePageState extends State<HomePage> {
                 ),
                 onTap: () => _selectTime(context),
               ),
+              if (_errorMessage.isNotEmpty)
+                Text(
+                  _errorMessage,
+                  style: TextStyle(
+                    color: Colors.red,
+                  ),
+                )
             ],
           ),
         ),
         actions: [
           ElevatedButton(
             onPressed: () {
+              //check if any fields are empty
+              if (titleController.text.isEmpty ||
+                  descriptionController.text.isEmpty ||
+                  locationController.text.isEmpty ||
+                  locationController.text.isEmpty ||
+                  selectedDate == null ||
+                  selectedTime == null) {
+                setState(() {
+                  _errorMessage = "Please fill in all fields";
+                });
+                return;
+              }
+
               final noteData = {
                 'title': titleController.text,
                 'description': descriptionController.text,
@@ -149,6 +185,10 @@ class _HomePageState extends State<HomePage> {
     String date,
     String time,
   ) {
+    setState(() {
+      _errorMessage = "";
+    });
+
     titleController.text = title;
     descriptionController.text = description;
     locationController.text = location;
@@ -193,12 +233,31 @@ class _HomePageState extends State<HomePage> {
                 ),
                 onTap: () => _selectTime(context),
               ),
+              if (_errorMessage.isNotEmpty)
+                Text(
+                  _errorMessage,
+                  style: TextStyle(
+                    color: Colors.red,
+                  ),
+                ),
             ],
           ),
         ),
         actions: [
           ElevatedButton(
             onPressed: () {
+              if (titleController.text.isEmpty ||
+                  descriptionController.text.isEmpty ||
+                  locationController.text.isEmpty ||
+                  locationController.text.isEmpty ||
+                  selectedDate == null ||
+                  selectedTime == null) {
+                setState(() {
+                  _errorMessage = "Please fill in all fields";
+                });
+                return;
+              }
+
               final noteData = {
                 'title': titleController.text,
                 'description': descriptionController.text,
@@ -214,6 +273,14 @@ class _HomePageState extends State<HomePage> {
               };
 
               firestoreService.updateNote(docID, noteData);
+
+              titleController.clear();
+              descriptionController.clear();
+              locationController.clear();
+              dateController.clear();
+              timeController.clear();
+              selectedDate = null;
+              selectedTime = null;
 
               Navigator.pop(context);
             },
@@ -233,11 +300,11 @@ class _HomePageState extends State<HomePage> {
     return StreamBuilder<QuerySnapshot>(
       stream: firestoreService.getNotesStream(),
       builder: (context, snapshot) {
-        if(snapshot.hasData) {
+        if (snapshot.hasData) {
           List<DocumentSnapshot> notesList = snapshot.data!.docs;
 
           // sort notes by timestamp in descending order
-          notesList.sort((a, b){
+          notesList.sort((a, b) {
             Timestamp aTimestamp = a['timestamp'] ?? Timestamp.now();
             Timestamp bTimestamp = b['timestamp'] ?? Timestamp.now();
             return bTimestamp.compareTo(aTimestamp);
@@ -249,51 +316,108 @@ class _HomePageState extends State<HomePage> {
               DocumentSnapshot document = notesList[index];
               String docID = document.id;
 
-              Map<String, dynamic> data = document.data() as Map<String, dynamic>;
+              Map<String, dynamic> data =
+                  document.data() as Map<String, dynamic>;
 
               String title = data['title'] ?? 'No Title';
               String description = data['description'] ?? 'No Description';
               String location = data['location'] ?? 'No Location';
               String date = data['date'] != null
-                  ? DateFormat('yyyy-MM-dd').format(DateTime.parse(data['date']))
+                  ? DateFormat('yyyy-MM-dd')
+                      .format(DateTime.parse(data['date']))
                   : 'No Date';
               String time = data['time'] ?? 'No Time';
 
-              bool isCreator = data['creatorID'] == FirebaseAuth.instance.currentUser?.uid;
+              bool isCreator =
+                  data['creatorID'] == FirebaseAuth.instance.currentUser?.uid;
 
-              return ListTile(
-                title: Text(title),
-                subtitle: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text('Description: $description'),
-                    Text('Location: $location'),
-                    Text('Date: $date'),
-                    Text('Time: $time'),
+              DateTime eventDate = DateTime.parse(data['date']);
+              String day = DateFormat('d').format(eventDate);
+              String month = DateFormat('MMM').format(eventDate);
+
+              return Container(
+                margin:
+                    const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+                padding: const EdgeInsets.all(10.0),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(12.0),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.grey.withOpacity(0.5),
+                      spreadRadius: 2,
+                      blurRadius: 5,
+                      offset: Offset(0, 3),
+                    ),
                   ],
                 ),
-                trailing: isCreator
-                ? Row(
-                  mainAxisSize: MainAxisSize.min,
+                child: Stack(
                   children: [
-                    IconButton(
-                      onPressed: () => editEvent(
-                        docID,
-                        title,
-                        description,
-                        location,
-                        date,
-                        time,
+                    Row(
+                      children: [
+                        // Date and Time Column
+                        Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(day,
+                                style: TextStyle(
+                                    fontSize: 18, fontWeight: FontWeight.bold)),
+                            //SizedBox(height: 0),
+                            Text(month, style: TextStyle(fontSize: 14)),
+                            //SizedBox(height: 0),
+                            Text(time, style: TextStyle(fontSize: 14)),
+                          ],
+                        ),
+                        const SizedBox(width: 16.0),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(title,
+                                  style: TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold)),
+                              Text('Description: $description', style: TextStyle(fontSize: 14)),
+                              Text('Location: $location', style: TextStyle(fontSize: 14)),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                    if (isCreator)
+                      Positioned(
+                        top: 0,
+                        right: 0,
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            IconButton(
+                              onPressed: () => editEvent(
+                                docID,
+                                title,
+                                description,
+                                location,
+                                date,
+                                time,
+                              ),
+                              icon: const Icon(Icons.settings),
+                              iconSize: 15,
+                              padding: EdgeInsets.zero,
+                              constraints: BoxConstraints(),
+                            ),
+                            IconButton(
+                              onPressed: () =>
+                                  firestoreService.deleteNote(docID),
+                              icon: const Icon(Icons.delete),
+                              iconSize: 15,
+                              padding: EdgeInsets.zero,
+                              constraints: BoxConstraints(),
+                            ),
+                          ],
+                        ),
                       ),
-                      icon: const Icon(Icons.settings),
-                    ),
-                    IconButton(
-                      onPressed: () => firestoreService.deleteNote(docID),
-                      icon: const Icon(Icons.delete),
-                    ),
                   ],
-                )
-                : null,
+                ),
               );
             },
           );
@@ -310,8 +434,14 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Vassar NiteLife"),
-        backgroundColor: Color.fromARGB(148, 176, 17, 17),
+        title: const Text(
+          "N i t e L i f e",
+          style: TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        backgroundColor: Color.fromARGB(255, 99, 7, 7),
         actions: [
           // logout button
           IconButton(
@@ -328,8 +458,6 @@ class _HomePageState extends State<HomePage> {
           const ProfilePage(),
         ],
       ),
-
-
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex,
         onTap: (int newIndex) {

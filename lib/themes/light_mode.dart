@@ -4,7 +4,7 @@ ThemeData lightMode = ThemeData(
   brightness: Brightness.light,
   colorScheme: ColorScheme.light(
     background: Colors.grey.shade300,
-    primary: Colors.grey.shade200,
+    primary: Colors.black,
     secondary:  Colors.grey.shade400,
     inversePrimary: Colors.grey.shade600,
   ),
