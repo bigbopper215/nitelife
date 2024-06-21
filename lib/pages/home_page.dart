@@ -328,12 +328,17 @@ class _HomePageState extends State<HomePage> {
                   : 'No Date';
               String time = data['time'] ?? 'No Time';
 
+              int upvotes = data['upvotes'] ?? 0;
+              int downvotes = data['downvotes'] ?? 0;
+              int netVotes = upvotes - downvotes;
+
               bool isCreator =
                   data['creatorID'] == FirebaseAuth.instance.currentUser?.uid;
 
               DateTime eventDate = DateTime.parse(data['date']);
               String day = DateFormat('d').format(eventDate);
               String month = DateFormat('MMM').format(eventDate);
+              String dayOfWeek = DateFormat('E').format(eventDate);
 
               return Container(
                 margin:
@@ -365,7 +370,7 @@ class _HomePageState extends State<HomePage> {
                             //SizedBox(height: 0),
                             Text(month, style: TextStyle(fontSize: 14)),
                             //SizedBox(height: 0),
-                            Text(time, style: TextStyle(fontSize: 14)),
+                            Text('$dayOfWeek @$time', style: TextStyle(fontSize: 11)),
                           ],
                         ),
                         const SizedBox(width: 16.0),
@@ -381,6 +386,19 @@ class _HomePageState extends State<HomePage> {
                               Text('Location: $location', style: TextStyle(fontSize: 14)),
                             ],
                           ),
+                        ),
+                        Column(
+                          children: [
+                            IconButton(
+                              onPressed: () => firestoreService.upvoteEvent(docID), 
+                              icon: const Icon(Icons.arrow_upward),
+                            ),
+                            Text('$netVotes'),
+                            IconButton(
+                              onPressed: () => firestoreService.downvoteEvent(docID), 
+                              icon: Icon(Icons.arrow_downward),
+                            )
+                          ],
                         ),
                       ],
                     ),
