@@ -27,7 +27,7 @@ NiteLife is an app that is dedicated to promoting "events" on college campuses.
 
 ## Usage
 
-- For the people looking for things to do
+- For the people looking to get active
 
 ## Contributing
 
@@ -46,3 +46,4 @@ NiteLife is an app that is dedicated to promoting "events" on college campuses.
 
 - [Flutter](https://flutter.dev/docs/get-started/install) installed
 - [Firebase](https://firebase.google.com/) project set up
+- Currently will only be available for one school 
