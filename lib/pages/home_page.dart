@@ -2,8 +2,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:nite_life/pages/popular_page.dart';
 import 'package:nite_life/pages/profile_page.dart';
 import 'package:nite_life/services/firestore.dart';
+import 'calendar_page.dart';
+import 'new_events_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -12,7 +15,7 @@ class HomePage extends StatefulWidget {
   State<HomePage> createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   final FirestoreService firestoreService = FirestoreService();
 
   final TextEditingController titleController = TextEditingController();
@@ -24,7 +27,8 @@ class _HomePageState extends State<HomePage> {
   DateTime? selectedDate;
   TimeOfDay? selectedTime;
 
-  int _currentIndex = 0;
+  int _appBarCurrentIndex = 1;
+  int _bottomNavCurrentIndex = 0;
 
   String _errorMessage = "Fill in all fields";
 
@@ -295,8 +299,8 @@ class _HomePageState extends State<HomePage> {
   void logout() {
     FirebaseAuth.instance.signOut();
   }
-
-  Widget _buildHomePage() {
+/*
+  Widget _buildPopularPage() {
     return StreamBuilder<QuerySnapshot>(
       stream: firestoreService.getNotesStream(),
       builder: (context, snapshot) {
@@ -305,9 +309,9 @@ class _HomePageState extends State<HomePage> {
 
           // sort notes by timestamp in descending order
           notesList.sort((a, b) {
-            Timestamp aTimestamp = a['timestamp'] ?? Timestamp.now();
-            Timestamp bTimestamp = b['timestamp'] ?? Timestamp.now();
-            return bTimestamp.compareTo(aTimestamp);
+            int aNetVotes = _calculateNetVotes(a);
+            int bNetVotes = _calculateNetVotes(b);
+            return bNetVotes.compareTo(aNetVotes);
           });
 
           return ListView.builder(
@@ -370,7 +374,8 @@ class _HomePageState extends State<HomePage> {
                             //SizedBox(height: 0),
                             Text(month, style: TextStyle(fontSize: 14)),
                             //SizedBox(height: 0),
-                            Text('$dayOfWeek @$time', style: TextStyle(fontSize: 11)),
+                            Text('$dayOfWeek @$time',
+                                style: TextStyle(fontSize: 11)),
                           ],
                         ),
                         const SizedBox(width: 16.0),
@@ -382,26 +387,31 @@ class _HomePageState extends State<HomePage> {
                                   style: TextStyle(
                                       fontSize: 18,
                                       fontWeight: FontWeight.bold)),
-                              Text('Description: $description', style: TextStyle(fontSize: 14)),
-                              Text('Location: $location', style: TextStyle(fontSize: 14)),
+                              Text('Description: $description',
+                                  style: TextStyle(fontSize: 14)),
+                              Text('Location: $location',
+                                  style: TextStyle(fontSize: 14)),
                             ],
                           ),
                         ),
                         Column(
                           children: [
                             IconButton(
-                              onPressed: () => firestoreService.upvoteEvent(docID), 
-                              icon: const Icon(Icons.arrow_upward),
+                              onPressed: () =>
+                                  firestoreService.upvoteEvent(docID),
+                              icon: const Icon(Icons.keyboard_arrow_up),
                             ),
                             Text('$netVotes'),
                             IconButton(
-                              onPressed: () => firestoreService.downvoteEvent(docID), 
-                              icon: Icon(Icons.arrow_downward),
+                              onPressed: () =>
+                                  firestoreService.downvoteEvent(docID),
+                              icon: Icon(Icons.keyboard_arrow_down),
                             )
                           ],
                         ),
                       ],
                     ),
+                    /*
                     if (isCreator)
                       Positioned(
                         top: 0,
@@ -434,6 +444,7 @@ class _HomePageState extends State<HomePage> {
                           ],
                         ),
                       ),
+                      */
                   ],
                 ),
               );
@@ -447,11 +458,29 @@ class _HomePageState extends State<HomePage> {
       },
     );
   }
+  */
+
+  Widget _buildCalendarPage() {
+    return const CalendarPage();
+  }
+
+  Widget _buildNewEventsPage() {
+    return const NewEventsPage();
+  }
+
+  Widget _buildPopularPage() {
+    return const PopularPage();
+  }
+
+  Widget _buildProfilePage() {
+    return const ProfilePage();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
+      appBar: _bottomNavCurrentIndex == 0
+        ? AppBar(
         title: const Text(
           "N i t e L i f e",
           style: TextStyle(
@@ -459,31 +488,52 @@ class _HomePageState extends State<HomePage> {
             fontWeight: FontWeight.bold,
           ),
         ),
-        backgroundColor: Color.fromARGB(255, 99, 7, 7),
+        backgroundColor: const Color.fromARGB(255, 99, 7, 7),
         actions: [
           // logout button
+          
           IconButton(
             onPressed: logout,
             icon: Icon(Icons.logout),
           ),
+          
         ],
-      ),
-      body: IndexedStack(
-        index: _currentIndex,
+        bottom: TabBar(
+          controller: TabController(
+              length: 3, vsync: this, initialIndex: _appBarCurrentIndex),
+          onTap: (index) {
+            setState(() {
+              _appBarCurrentIndex = index;
+            });
+          },
+          tabs: [
+            Tab(text: 'Calendar'),
+            Tab(text: 'Popular'),
+            Tab(text: 'New'),
+          ],
+        ),
+      )
+      : null,
+      body: _bottomNavCurrentIndex == 0
+        ? IndexedStack(
+        index: _appBarCurrentIndex,
         children: [
-          _buildHomePage(),
-          const Placeholder(),
-          const ProfilePage(),
+          _buildCalendarPage(),
+          _buildPopularPage(),
+          _buildNewEventsPage(),
         ],
-      ),
+      )
+      : _bottomNavCurrentIndex == 2
+        ? _buildProfilePage()
+        : null,
       bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _currentIndex,
+        currentIndex: _bottomNavCurrentIndex,
         onTap: (int newIndex) {
           if (newIndex == 1) {
             openNoteBox();
           } else {
             setState(() {
-              _currentIndex = newIndex;
+              _bottomNavCurrentIndex = newIndex;
             });
           }
         },
@@ -504,4 +554,10 @@ class _HomePageState extends State<HomePage> {
       ),
     );
   }
+}
+
+int _calculateNetVotes(DocumentSnapshot document) {
+  int upvotes = document['upvotes'] ?? 0;
+  int downvotes = document['downvotes'] ?? 0;
+  return upvotes - downvotes;
 }
