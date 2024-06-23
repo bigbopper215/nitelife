@@ -2,17 +2,13 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class FirestoreService {
-
-  //final CollectionReference notes = 
-    //FirebaseFirestore.instance.collection('notes');
-
   final CollectionReference notesCollection = FirebaseFirestore.instance.collection('notes');
 
   Future<void> addNote(Map<String, dynamic> noteData) async {
     await notesCollection.add(noteData);
   }
 
-   Future<void> updateNote(String docID, Map<String, dynamic> noteData) async {
+  Future<void> updateNote(String docID, Map<String, dynamic> noteData) async {
     await notesCollection.doc(docID).update(noteData);
   }
 
@@ -98,4 +94,12 @@ class FirestoreService {
     });
   }
 
+  Future<void> updateDocument(String docID, Map<String, dynamic> data) async {
+    await notesCollection.doc(docID).update(data);
+  }
+
+  // Implementing the getDocument method
+  Future<DocumentSnapshot> getDocument(String docID) async {
+    return await notesCollection.doc(docID).get();
+  }
 }
