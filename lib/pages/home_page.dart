@@ -482,10 +482,11 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       appBar: _bottomNavCurrentIndex == 0
         ? AppBar(
         title: const Text(
-          "N i t e L i f e",
+          "NiteLife",
           style: TextStyle(
             color: Colors.white,
             fontWeight: FontWeight.bold,
+            letterSpacing: 1.0,
           ),
         ),
         backgroundColor: const Color.fromARGB(255, 99, 7, 7),
