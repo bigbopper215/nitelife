@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:nite_life/services/firestore.dart';
+import 'package:nite_life/components/vote_widget.dart';
 
 class PopularPage extends StatefulWidget {
   const PopularPage({super.key});
@@ -117,6 +118,49 @@ class _PopularPageState extends State<PopularPage> {
     });
   }
 
+  // displays event details
+  void _showEventDetails(String docID) {
+  DocumentSnapshot document = notesList.firstWhere((note) => note.id == docID);
+  Map<String, dynamic> data = document.data() as Map<String, dynamic>;
+
+  String title = data['title'] ?? 'No Title';
+  String description = data['description'] ?? 'No Description';
+  String location = data['location'] ?? 'No Location';
+
+  String dateString = data['date'] ?? '';
+  DateTime? dateParsed = DateTime.tryParse(dateString); // Parse your date string
+
+  String time = data['time'] ?? '';
+
+  // Display your event details or open a dialog with the details
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title: Text(title),
+        content: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text('Description: $description'),
+            Text('Location: $location'),
+            if (dateParsed != null) Text('Date: ${DateFormat('yyyy-MM-dd').format(dateParsed)}'),
+            Text('Time: $time'),
+          ],
+        ),
+        actions: <Widget>[
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: Text('Close'),
+          ),
+        ],
+      );
+    },
+  );
+}
+
+
+
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<QuerySnapshot>(
@@ -160,7 +204,10 @@ class _PopularPageState extends State<PopularPage> {
                 String month = DateFormat('MMM').format(eventDate);
                 String dayOfWeek = DateFormat('E').format(eventDate);
 
-                return Container(
+
+                return GestureDetector(
+                  onTap: () => _showEventDetails(docID),
+                  child: Container(
                   margin: const EdgeInsets.symmetric(
                       vertical: 8.0, horizontal: 16.0),
                   padding: const EdgeInsets.all(10.0),
@@ -199,32 +246,40 @@ class _PopularPageState extends State<PopularPage> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(title,
-                                    style: TextStyle(
+                                    style: const TextStyle(
                                         fontSize: 18,
                                         fontWeight: FontWeight.bold)),
                                 Text('Description: $description',
-                                    style: TextStyle(fontSize: 14)),
+                                    style: const TextStyle(fontSize: 14)),
                                 Text('Location: $location',
-                                    style: TextStyle(fontSize: 14)),
+                                    style: const TextStyle(fontSize: 14)),
                               ],
                             ),
                           ),
                           Column(
                             children: [
                               IconButton(
+                                iconSize: 35,
                                 onPressed: () => _upvoteEvent(docID),
                                 icon: const Icon(Icons.keyboard_arrow_up),
                               ),
-                              Text('$netVotes'),
+                              Text(
+                                '$netVotes',
+                                 style: const TextStyle(
+                                  fontSize: 15,
+                                  ),
+                                ),
                               IconButton(
+                                iconSize: 35,
                                 onPressed: () => _downvoteEvent(docID),
-                                icon: Icon(Icons.keyboard_arrow_down),
+                                icon: const Icon(Icons.keyboard_arrow_down),
                               )
                             ],
                           ),
                         ],
                       ),
                     ],
+                  ),
                   ),
                 );
               },
