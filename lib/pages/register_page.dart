@@ -2,6 +2,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:nite_life/components/my_button.dart';
 import 'package:nite_life/components/my_textfield.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:nite_life/pages/home_page.dart';
 import '../helper/helper_functions.dart';
 
 class RegisterPage extends StatefulWidget {
@@ -35,16 +37,14 @@ class _RegisterPageState extends State<RegisterPage> {
 
     // make sure passwords match
     if (passwordController.text != confirmPwController.text) {
-      // pop loading circle
       Navigator.pop(context);
 
-      // show error message to user
-      //displayMessageToUser("Passwords don't Match!", context);
       setState(() {
-          _hasError = false;
-          _errorMessage = "Passwords don't Match!";
-        });
-    } 
+        _hasError = false;
+        _errorMessage = "Passwords Don't Match!";
+      });
+      }
+    
     // if passwords do match
     else {
       // try creating the user
@@ -55,23 +55,36 @@ class _RegisterPageState extends State<RegisterPage> {
           password: passwordController.text,
         );
 
-        // pop loading circle
+        /*
+        await FirebaseFirestore.instance
+            .collection('users')
+            .doc(userCredential.user?.uid)
+            .set({
+          
+          'email': emailController.text,
+          'userID': userCredential.user?.uid,
+          'username': usernameController.text,
+
+          // add any other user detials
+        });
+        */
+        
+
         if (context.mounted) Navigator.pop(context);
 
-        // Reset error message on successful registery
         setState(() {
           _hasError = false;
           _errorMessage = "";
         });
+
+        // update the user profile
+        //await userCredential.user?.updateDisplayName(usernameController.text);
+
+
+
         
       } on FirebaseAuthException catch (e) {
-        // pop loading circle
         Navigator.pop(context);
-
-        // display error message to user
-        //displayMessageToUser(e.code, context);
-
-        // Set the error message
         setState(() {
           _hasError = true;
           _errorMessage = e.code;

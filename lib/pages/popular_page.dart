@@ -173,8 +173,9 @@ class PopularPage extends StatelessWidget {
 }
 
 int _calculateNetVotes(DocumentSnapshot document) {
-  int upvotes = document['upvotes'] ?? 0;
-  int downvotes = document['downvotes'] ?? 0;
+  Map<String, dynamic> data = document.data() as Map<String, dynamic>;
+  int upvotes = data['upvotes'] ?? 0;
+  int downvotes = data['downvotes'] ?? 0;
   return upvotes - downvotes;
 }
 
