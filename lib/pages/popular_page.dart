@@ -3,10 +3,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:nite_life/services/firestore.dart';
-import 'package:nite_life/components/vote_widget.dart';
 
 class PopularPage extends StatefulWidget {
-  const PopularPage({super.key});
+  const PopularPage({Key? key}) : super(key: key);
 
   @override
   _PopularPageState createState() => _PopularPageState();
@@ -17,6 +16,8 @@ class _PopularPageState extends State<PopularPage> {
   List<DocumentSnapshot> notesList = [];
   Map<String, int> netVotesMap = {};
   User? currentUser;
+
+  Map<String, int> userVotes = {};
 
   @override
   void initState() {
@@ -54,6 +55,13 @@ class _PopularPageState extends State<PopularPage> {
     return upvotes - downvotes;
   }
 
+  int _getUserVoteStatus(DocumentSnapshot document) {
+    Map<String, dynamic> data = document.data() as Map<String, dynamic>;
+    Map<String, dynamic> votes = Map<String, dynamic>.from(data['votes'] ?? {});
+    int voteStatus = votes[currentUser!.uid] ?? 0;
+    return voteStatus;
+  }
+
   void _upvoteEvent(String docID) async {
     DocumentSnapshot document = await firestoreService.getDocument(docID);
     Map<String, dynamic> data = document.data() as Map<String, dynamic>;
@@ -64,17 +72,20 @@ class _PopularPageState extends State<PopularPage> {
       votes.remove(currentUser!.uid);
       data['upvotes'] = (data['upvotes'] ?? 0) - 1;
       _updateNetVotes(docID, -1);
+      userVotes[docID] = 0;
     } else if (votes[currentUser!.uid] == -1) {
       // User is changing their vote from downvote to upvote
       votes[currentUser!.uid] = 1;
       data['upvotes'] = (data['upvotes'] ?? 0) + 1;
       data['downvotes'] = (data['downvotes'] ?? 0) - 1;
       _updateNetVotes(docID, 2);
+      userVotes[docID] = 1;
     } else {
       // User is upvoting for the first time
       votes[currentUser!.uid] = 1;
       data['upvotes'] = (data['upvotes'] ?? 0) + 1;
       _updateNetVotes(docID, 1);
+      userVotes[docID] = 1;
     }
 
     data['votes'] = votes;
@@ -91,17 +102,20 @@ class _PopularPageState extends State<PopularPage> {
       votes.remove(currentUser!.uid);
       data['downvotes'] = (data['downvotes'] ?? 0) - 1;
       _updateNetVotes(docID, 1);
+      userVotes[docID] = 0;
     } else if (votes[currentUser!.uid] == 1) {
       // User is changing their vote from upvote to downvote
       votes[currentUser!.uid] = -1;
       data['upvotes'] = (data['upvotes'] ?? 0) - 1;
       data['downvotes'] = (data['downvotes'] ?? 0) + 1;
       _updateNetVotes(docID, -2);
+      userVotes[docID] = -1;
     } else {
       // User is downvoting for the first time
       votes[currentUser!.uid] = -1;
       data['downvotes'] = (data['downvotes'] ?? 0) + 1;
       _updateNetVotes(docID, -1);
+      userVotes[docID] = -1;
     }
 
     data['votes'] = votes;
@@ -118,59 +132,57 @@ class _PopularPageState extends State<PopularPage> {
     });
   }
 
-  // displays event details
   void _showEventDetails(String docID) {
-  DocumentSnapshot document = notesList.firstWhere((note) => note.id == docID);
-  Map<String, dynamic> data = document.data() as Map<String, dynamic>;
+    DocumentSnapshot document = notesList.firstWhere((note) => note.id == docID);
+    Map<String, dynamic> data = document.data() as Map<String, dynamic>;
 
-  String title = data['title'] ?? 'No Title';
-  String description = data['description'] ?? 'No Description';
-  String location = data['location'] ?? 'No Location';
+    String title = data['title'] ?? 'No Title';
+    String description = data['description'] ?? 'No Description';
+    String location = data['location'] ?? 'No Location';
 
-  String dateString = data['date'] ?? '';
-  DateTime? dateParsed = DateTime.tryParse(dateString); // Parse your date string
+    String dateString = data['date'] ?? '';
+    DateTime? dateParsed = DateTime.tryParse(dateString);
 
-  String time = data['time'] ?? '';
+    String time = data['time'] ?? '';
 
-  // Display your event details or open a dialog with the details
-  showDialog(
-    context: context,
-    builder: (BuildContext context) {
-      return AlertDialog(
-        title: Text(title),
-        content: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text('Description: $description'),
-            Text('Location: $location'),
-            if (dateParsed != null) Text('Date: ${DateFormat('yyyy-MM-dd').format(dateParsed)}'),
-            Text('Time: $time'),
-          ],
-        ),
-        actions: <Widget>[
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: Text('Close'),
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(title),
+          content: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text('Description: $description'),
+              Text('Location: $location'),
+              if (dateParsed != null)
+                Text('Date: ${DateFormat('yyyy-MM-dd').format(dateParsed)}'),
+              Text('Time: $time'),
+            ],
           ),
-        ],
-      );
-    },
-  );
-}
-
-
+          actions: <Widget>[
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: Text('Close'),
+            ),
+          ],
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<QuerySnapshot>(
-      stream: firestoreService.getNotesStream(),
+      stream: firestoreService.getPopularEventsStream(),
       builder: (context, snapshot) {
         if (snapshot.hasData) {
           if (notesList.isEmpty) {
             notesList = snapshot.data!.docs;
             for (var doc in notesList) {
               netVotesMap[doc.id] = _calculateNetVotes(doc);
+              userVotes[doc.id] = _getUserVoteStatus(doc);
             }
           }
 
@@ -204,82 +216,93 @@ class _PopularPageState extends State<PopularPage> {
                 String month = DateFormat('MMM').format(eventDate);
                 String dayOfWeek = DateFormat('E').format(eventDate);
 
+                int userVote = userVotes[docID] ?? 0;
 
                 return GestureDetector(
                   onTap: () => _showEventDetails(docID),
                   child: Container(
-                  margin: const EdgeInsets.symmetric(
-                      vertical: 8.0, horizontal: 16.0),
-                  padding: const EdgeInsets.all(10.0),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(12.0),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.grey.withOpacity(0.5),
-                        spreadRadius: 2,
-                        blurRadius: 5,
-                        offset: Offset(0, 3),
-                      ),
-                    ],
-                  ),
-                  child: Stack(
-                    children: [
-                      Row(
-                        children: [
-                          // Date and Time Column
-                          Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Text(day,
-                                  style: TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.bold)),
-                              Text(month, style: TextStyle(fontSize: 14)),
-                              Text('$dayOfWeek @$time',
-                                  style: TextStyle(fontSize: 11)),
-                            ],
-                          ),
-                          const SizedBox(width: 16.0),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
+                    margin: const EdgeInsets.symmetric(
+                        vertical: 8.0, horizontal: 16.0),
+                    padding: const EdgeInsets.all(10.0),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(12.0),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.grey.withOpacity(0.5),
+                          spreadRadius: 2,
+                          blurRadius: 5,
+                          offset: Offset(0, 3),
+                        ),
+                      ],
+                    ),
+                    child: Stack(
+                      children: [
+                        Row(
+                          children: [
+                            // Date and Time Column
+                            Column(
+                              mainAxisSize: MainAxisSize.min,
                               children: [
-                                Text(title,
-                                    style: const TextStyle(
+                                Text(day,
+                                    style: TextStyle(
                                         fontSize: 18,
                                         fontWeight: FontWeight.bold)),
-                                Text('Description: $description',
-                                    style: const TextStyle(fontSize: 14)),
-                                Text('Location: $location',
-                                    style: const TextStyle(fontSize: 14)),
+                                Text(month, style: TextStyle(fontSize: 14)),
+                                Text('$dayOfWeek @$time',
+                                    style: TextStyle(fontSize: 11)),
                               ],
                             ),
-                          ),
-                          Column(
-                            children: [
-                              IconButton(
-                                iconSize: 35,
-                                onPressed: () => _upvoteEvent(docID),
-                                icon: const Icon(Icons.keyboard_arrow_up),
+                            const SizedBox(width: 16.0),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(title,
+                                      style: const TextStyle(
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.bold)),
+                                  Text('Description: $description',
+                                      style: const TextStyle(fontSize: 14)),
+                                  Text('Location: $location',
+                                      style: const TextStyle(fontSize: 14)),
+                                ],
                               ),
-                              Text(
-                                '$netVotes',
-                                 style: const TextStyle(
-                                  fontSize: 15,
+                            ),
+                            Column(
+                              children: [
+                                IconButton(
+                                  iconSize: 35,
+                                  onPressed: () => _upvoteEvent(docID),
+                                  icon: Icon(
+                                    Icons.keyboard_arrow_up,
+                                    color: userVote == 1
+                                        ? Colors.green
+                                        : Colors.grey,
                                   ),
                                 ),
-                              IconButton(
-                                iconSize: 35,
-                                onPressed: () => _downvoteEvent(docID),
-                                icon: const Icon(Icons.keyboard_arrow_down),
-                              )
-                            ],
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
+                                Text(
+                                  '$netVotes',
+                                  style: const TextStyle(
+                                    fontSize: 15,
+                                  ),
+                                ),
+                                IconButton(
+                                  iconSize: 35,
+                                  onPressed: () => _downvoteEvent(docID),
+                                  icon: Icon(
+                                    Icons.keyboard_arrow_down,
+                                    color: userVote == -1
+                                        ? Colors.red
+                                        : Colors.grey,
+                                  ),
+                                )
+                              ],
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
                 );
               },

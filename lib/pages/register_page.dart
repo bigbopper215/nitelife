@@ -40,13 +40,14 @@ class _RegisterPageState extends State<RegisterPage> {
       Navigator.pop(context);
 
       setState(() {
-        _hasError = false;
+        _hasError = true;
         _errorMessage = "Passwords Don't Match!";
       });
+      return;
       }
     
     // if passwords do match
-    else {
+    
       // try creating the user
       try {
         UserCredential? userCredential =
@@ -55,7 +56,7 @@ class _RegisterPageState extends State<RegisterPage> {
           password: passwordController.text,
         );
 
-        /*
+        
         await FirebaseFirestore.instance
             .collection('users')
             .doc(userCredential.user?.uid)
@@ -67,10 +68,10 @@ class _RegisterPageState extends State<RegisterPage> {
 
           // add any other user detials
         });
-        */
         
-
-        if (context.mounted) Navigator.pop(context);
+        // Check if the widget is still mounted before updating UI
+      if (!mounted) return;
+      Navigator.pop(context); // Close the loading indicator
 
         setState(() {
           _hasError = false;
@@ -79,19 +80,26 @@ class _RegisterPageState extends State<RegisterPage> {
 
         // update the user profile
         //await userCredential.user?.updateDisplayName(usernameController.text);
-
+        // Navigate to home page (or other pages) after successful registration
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => HomePage()),
+      );
 
 
         
       } on FirebaseAuthException catch (e) {
         Navigator.pop(context);
+
+        if (!mounted) return;
+
         setState(() {
           _hasError = true;
-          _errorMessage = e.code;
+          _errorMessage = e.message ?? "Registration Failed";
         });
       }
     }
-  }
+  
 
   @override
   Widget build(BuildContext context) {

@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:nite_life/pages/popular_page.dart';
 import 'package:nite_life/pages/profile_page.dart';
 import 'package:nite_life/services/firestore.dart';
 import 'calendar_page.dart';
@@ -12,6 +13,7 @@ class CalendarPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
     final FirestoreService firestoreService = FirestoreService();
     return StreamBuilder<QuerySnapshot>(
       stream: firestoreService.getNotesStream(),
@@ -109,15 +111,29 @@ class CalendarPage extends StatelessWidget {
                         Column(
                           children: [
                             IconButton(
+                              iconSize: 35,
                               onPressed: () =>
                                   firestoreService.upvoteEvent(docID),
-                              icon: const Icon(Icons.keyboard_arrow_up),
+                              icon: Icon(
+                                Icons.keyboard_arrow_up,
+                                /*
+                                if upvoted
+                                  color = green
+                                */
+                              ),
                             ),
                             Text('$netVotes'),
                             IconButton(
+                              iconSize: 35,
                               onPressed: () =>
                                   firestoreService.downvoteEvent(docID),
-                              icon: Icon(Icons.keyboard_arrow_down),
+                              icon: Icon(
+                                Icons.keyboard_arrow_down,
+                                /*
+                                if downvoted
+                                  color = red
+                                 */
+                              ),
                             )
                           ],
                         ),
