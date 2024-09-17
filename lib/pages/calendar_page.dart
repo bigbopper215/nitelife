@@ -13,8 +13,9 @@ class CalendarPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     final FirestoreService firestoreService = FirestoreService();
+    User? currentUser = FirebaseAuth.instance.currentUser;
+
     return StreamBuilder<QuerySnapshot>(
       stream: firestoreService.getNotesStream(),
       builder: (context, snapshot) {
@@ -50,6 +51,8 @@ class CalendarPage extends StatelessWidget {
               int downvotes = data['downvotes'] ?? 0;
               int netVotes = upvotes - downvotes;
 
+              
+
               bool isCreator =
                   data['creatorID'] == FirebaseAuth.instance.currentUser?.uid;
 
@@ -57,6 +60,10 @@ class CalendarPage extends StatelessWidget {
               String day = DateFormat('d').format(eventDate);
               String month = DateFormat('MMM').format(eventDate);
               String dayOfWeek = DateFormat('E').format(eventDate);
+
+              int userVote = (data['votes'] != null && data['votes'][currentUser?.uid] != null)
+                ? data['votes'][currentUser!.uid]
+                : 0;
 
               return Container(
                 margin:
@@ -116,6 +123,7 @@ class CalendarPage extends StatelessWidget {
                                   firestoreService.upvoteEvent(docID),
                               icon: Icon(
                                 Icons.keyboard_arrow_up,
+                                color: userVote == 1? Colors.green : Colors.grey,
                                 /*
                                 if upvoted
                                   color = green
@@ -129,6 +137,7 @@ class CalendarPage extends StatelessWidget {
                                   firestoreService.downvoteEvent(docID),
                               icon: Icon(
                                 Icons.keyboard_arrow_down,
+                                color: userVote == -1 ? Colors.red : Colors.grey,
                                 /*
                                 if downvoted
                                   color = red
