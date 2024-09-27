@@ -1,5 +1,3 @@
-import 'dart:ffi';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -324,6 +322,46 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     return Scaffold(
       appBar: _bottomNavCurrentIndex == 0
         ? AppBar(
+          title: Row(
+            children: [
+              const SizedBox(width: 8),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 1),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(5.0),
+                  ),
+                  child: const Text(
+                    'NL',
+                    style: TextStyle(
+                      height: 2.0,
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      letterSpacing: 1.0,
+                      color: Color.fromARGB(255, 99, 7, 7),
+                    ),
+                  ),
+              ),
+              const SizedBox(width: 10),
+              SizedBox(
+                width: 300,
+                height: 40,
+                child: TextField(
+                decoration: InputDecoration(
+                  hintText: 'Search...',
+                  fillColor: Colors.white,
+                  filled: true,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(5.0),
+                    borderSide: BorderSide.none, 
+                    ),
+                    prefixIcon: const Icon(Icons.search)
+                ),
+              ),
+              ),
+            ],
+          ),
+          /*
         title: const Text(
           "NiteLife",
           style: TextStyle(
@@ -332,7 +370,10 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
             letterSpacing: 1.0,
           ),
         ),
+        */
         backgroundColor: const Color.fromARGB(255, 99, 7, 7),
+        //backgroundColor: Color.fromARGB(255, 20, 4, 4),
+        /*
         actions: [
           // logout button
           
@@ -342,6 +383,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
           ),
           
         ],
+        */
         bottom: TabBar(
           controller: TabController(
               length: 3, vsync: this, initialIndex: _appBarCurrentIndex),
@@ -355,6 +397,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
             Tab(text: 'Popular'),
             Tab(text: 'New'),
           ],
+          unselectedLabelColor: Colors.white70,
+          labelColor: Colors.white,
         ),
       )
       : null,

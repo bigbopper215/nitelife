@@ -44,62 +44,56 @@ class _RegisterPageState extends State<RegisterPage> {
         _errorMessage = "Passwords Don't Match!";
       });
       return;
-      }
-    
+    }
+
     // if passwords do match
-    
-      // try creating the user
-      try {
-        UserCredential? userCredential =
-            await FirebaseAuth.instance.createUserWithEmailAndPassword(
-          email: emailController.text,
-          password: passwordController.text,
-        );
 
-        
-        await FirebaseFirestore.instance
-            .collection('users')
-            .doc(userCredential.user?.uid)
-            .set({
-          
-          'email': emailController.text,
-          'userID': userCredential.user?.uid,
-          'username': usernameController.text,
+    // try creating the user
+    try {
+      UserCredential? userCredential =
+          await FirebaseAuth.instance.createUserWithEmailAndPassword(
+        email: emailController.text,
+        password: passwordController.text,
+      );
 
-          // add any other user detials
-        });
-        
-        // Check if the widget is still mounted before updating UI
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(userCredential.user?.uid)
+          .set({
+        'email': emailController.text,
+        'userID': userCredential.user?.uid,
+        'username': usernameController.text,
+
+        // add any other user detials
+      });
+
+      // Check if the widget is still mounted before updating UI
       if (!mounted) return;
       Navigator.pop(context); // Close the loading indicator
 
-        setState(() {
-          _hasError = false;
-          _errorMessage = "";
-        });
+      setState(() {
+        _hasError = false;
+        _errorMessage = "";
+      });
 
-        // update the user profile
-        //await userCredential.user?.updateDisplayName(usernameController.text);
-        // Navigate to home page (or other pages) after successful registration
+      // update the user profile
+      //await userCredential.user?.updateDisplayName(usernameController.text);
+      // Navigate to home page (or other pages) after successful registration
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (context) => HomePage()),
       );
+    } on FirebaseAuthException catch (e) {
+      Navigator.pop(context);
 
+      if (!mounted) return;
 
-        
-      } on FirebaseAuthException catch (e) {
-        Navigator.pop(context);
-
-        if (!mounted) return;
-
-        setState(() {
-          _hasError = true;
-          _errorMessage = e.message ?? "Registration Failed";
-        });
-      }
+      setState(() {
+        _hasError = true;
+        _errorMessage = e.message ?? "Registration Failed";
+      });
     }
-  
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -112,20 +106,44 @@ class _RegisterPageState extends State<RegisterPage> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               //logo
+              /*
               Icon(
                 Icons.person,
                 size: 80,
                 color: Theme.of(context).colorScheme.inversePrimary,
               ),
+              */
 
-              const SizedBox(height: 25),
-
-              Text(
-                "N i t e L i f e",
-                style: TextStyle(fontSize: 20),
+              const Text(
+                "Welcome to Vassar NiteLife",
+                style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black),
               ),
 
-              const SizedBox(height: 50),
+              const SizedBox(height: 3),
+
+              const Text(
+                "Create a new account with your Vassar email to get started",
+                style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black),
+              ),
+
+              /*
+
+              const Text(
+                "N i t e L i f e",
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  ),
+              ),
+              */
+
+              const SizedBox(height: 20),
 
               // username textfield
               MyTextfield(

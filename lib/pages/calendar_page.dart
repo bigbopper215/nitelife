@@ -15,12 +15,58 @@ class CalendarPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final FirestoreService firestoreService = FirestoreService();
     User? currentUser = FirebaseAuth.instance.currentUser;
+    
 
     return StreamBuilder<QuerySnapshot>(
       stream: firestoreService.getNotesStream(),
       builder: (context, snapshot) {
         if (snapshot.hasData) {
           List<DocumentSnapshot> notesList = snapshot.data!.docs;
+
+          // displays event details
+          void _showEventDetails(String docID) {
+            DocumentSnapshot document =
+                notesList.firstWhere((note) => note.id == docID);
+            Map<String, dynamic> data = document.data() as Map<String, dynamic>;
+
+            String title = data['title'] ?? 'No Title';
+            String description = data['description'] ?? 'No Description';
+            String location = data['location'] ?? 'No Location';
+
+            String dateString = data['date'] ?? '';
+            DateTime? dateParsed =
+                DateTime.tryParse(dateString); // Parse your date string
+
+            String time = data['time'] ?? '';
+
+            // Display your event details or open a dialog with the details
+            showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return AlertDialog(
+                  title: Text(title),
+                  content: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text('Description: $description'),
+                      Text('Location: $location'),
+                      if (dateParsed != null)
+                        Text(
+                            'Date: ${DateFormat('yyyy-MM-dd').format(dateParsed)}'),
+                      Text('Time: $time'),
+                    ],
+                  ),
+                  actions: <Widget>[
+                    TextButton(
+                      onPressed: () => Navigator.of(context).pop(),
+                      child: Text('Close'),
+                    ),
+                  ],
+                );
+              },
+            );
+          }
 
           // sort notes by timestamp in descending order
           notesList.sort((a, b) {
@@ -65,7 +111,9 @@ class CalendarPage extends StatelessWidget {
                 ? data['votes'][currentUser!.uid]
                 : 0;
 
-              return Container(
+              return GestureDetector(
+                onTap: () => _showEventDetails(docID),
+                child: Container(
                 margin:
                     const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
                 padding: const EdgeInsets.all(10.0),
@@ -184,6 +232,7 @@ class CalendarPage extends StatelessWidget {
                       */
                   ],
                 ),
+                )
               );
             },
           );
@@ -220,6 +269,7 @@ class CalendarPage extends StatelessWidget {
       return DateTime.parse(date);
     }
   }
+
 
 
 

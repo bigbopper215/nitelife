@@ -23,11 +23,11 @@ class ProfilePage extends StatelessWidget {
         preferredSize: Size.fromHeight(40.0), // Set the height you want
         child: AppBar(
           backgroundColor: Color.fromARGB(255, 99, 7, 7),
-          title: Row(
+          title: const Row(
             children: [
               SizedBox(width: 8),
               Text(
-                'NiteLife',
+                'Profile',
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,

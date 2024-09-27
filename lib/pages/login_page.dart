@@ -61,7 +61,7 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.background,
+      //backgroundColor: Theme.of(context).colorScheme.background,
       body: Center(
         child: Padding(
           padding: const EdgeInsets.all(25.0),
@@ -69,20 +69,35 @@ class _LoginPageState extends State<LoginPage> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               //logo
+              //replace with NL
+              /*
               Icon(
                 Icons.person,
                 size: 80,
                 color: Theme.of(context).colorScheme.inversePrimary,
               ),
+              */
+              const Text(
+                "Welcome to NiteLife",
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black,
+                ),
+                ),
 
               const SizedBox(height: 25),
 
-              Text(
-                "N i t e L i f e",
-                style: TextStyle(fontSize: 20),
+              const Text(
+                "Login",
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black
+                  ),
               ),
 
-              const SizedBox(height: 50),
+              const SizedBox(height: 10),
 
               //email textfield
               MyTextfield(
@@ -131,7 +146,7 @@ class _LoginPageState extends State<LoginPage> {
                 onTap: login,
               ),
 
-              const SizedBox(height: 10),
+              const SizedBox(height: 20),
 
               // no account? Register here
               Row(
