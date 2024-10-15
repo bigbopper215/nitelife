@@ -20,6 +20,15 @@ class FirestoreService {
     return notesCollection.orderBy('timestamp', descending: true).snapshots();
   }
 
+  Stream<QuerySnapshot> getCommentsStream(String docID) {
+    return FirebaseFirestore.instance
+    .collection('notes')
+    .doc(docID)
+    .collection('comments')
+    .orderBy('timestamp', descending: true)
+    .snapshots();
+  }
+
   
 
   // Gets events by votes, for the popular page, pseudocode right now
@@ -153,5 +162,33 @@ class FirestoreService {
   // Implementing the getDocument method
   Future<DocumentSnapshot> getDocument(String docID) async {
     return await notesCollection.doc(docID).get();
+  }
+
+  Future<void> addComment(String docID, String comment) async {
+    User? currentUser = FirebaseAuth.instance.currentUser;
+
+    if (currentUser != null) {
+      String userID = currentUser.uid;
+
+      DocumentSnapshot userDoc = await FirebaseFirestore.instance
+      .collection('users')
+      .doc(userID)
+      .get();
+
+      String userName = userDoc['username'] ?? 'Anonymous'; // Fallback if username not found
+
+      //String username = snapshot.data!['username'] ?? 'No Username';
+
+      await FirebaseFirestore.instance
+        .collection('notes')
+        .doc(docID)
+        .collection('comments')
+        .add({
+          'comment': comment,
+          'userID': userID,
+          'userName': userName,
+          'timestamp': FieldValue.serverTimestamp(),
+        });
+    }
   }
 }

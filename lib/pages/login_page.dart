@@ -124,7 +124,7 @@ class _LoginPageState extends State<LoginPage> {
                   Flexible(
                     child: Text(
                       _errorMessage,
-                      style: TextStyle(
+                      style: const TextStyle(
                         color: Colors.red,
                       ),
                     ),

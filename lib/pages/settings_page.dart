@@ -37,7 +37,7 @@ class SettingsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: PreferredSize(
-        preferredSize: Size.fromHeight(40.0),
+        preferredSize: const Size.fromHeight(40.0),
         child: AppBar(
           title:  const Text(
             'Settings',
@@ -79,9 +79,9 @@ class SettingsPage extends StatelessWidget {
                 children: [
                   IconButton(
                     onPressed: logout,
-                    icon: Icon(Icons.logout),
+                    icon: const Icon(Icons.logout),
                   ),
-                  Text(
+                  const Text(
                     'Logout',
                   )
                 ],
@@ -101,8 +101,8 @@ class SettingsPage extends StatelessWidget {
                     onPressed: (){
                       _deleteAccount(context);
                       }, 
-                    icon: Icon(Icons.delete)),
-                  Text(
+                    icon: const Icon(Icons.delete)),
+                  const Text(
                     'Delete Account',
                   )
                 ],

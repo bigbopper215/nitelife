@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 class VoteWidget extends StatefulWidget {
+  const VoteWidget({super.key});
+
   @override
   _VoteWidgetState createState() => _VoteWidgetState();
 }
@@ -49,7 +51,7 @@ class _VoteWidgetState extends State<VoteWidget> {
           onTap: _handleUpvote,
           child: Icon(Icons.arrow_upward, color: upvoteColor),
         ),
-        SizedBox(width: 16),
+        const SizedBox(width: 16),
         GestureDetector(
           onTap: _handleDownvote,
           child: Icon(Icons.arrow_downward, color: downvoteColor),

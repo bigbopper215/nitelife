@@ -81,7 +81,7 @@ class _RegisterPageState extends State<RegisterPage> {
       // Navigate to home page (or other pages) after successful registration
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => HomePage()),
+        MaterialPageRoute(builder: (context) => const HomePage()),
       );
     } on FirebaseAuthException catch (e) {
       Navigator.pop(context);
@@ -98,7 +98,7 @@ class _RegisterPageState extends State<RegisterPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.background,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       body: Center(
         child: Padding(
           padding: const EdgeInsets.all(25.0),
@@ -189,7 +189,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   Flexible(
                     child: Text(
                       _errorMessage,
-                      style: TextStyle(
+                      style: const TextStyle(
                         color: Colors.red,
                       ),
                     ),

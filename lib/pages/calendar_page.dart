@@ -2,11 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:nite_life/pages/popular_page.dart';
-import 'package:nite_life/pages/profile_page.dart';
 import 'package:nite_life/services/firestore.dart';
-import 'calendar_page.dart';
-import 'new_events_page.dart';
 
 class CalendarPage extends StatelessWidget {
   const CalendarPage({super.key});
@@ -16,6 +12,103 @@ class CalendarPage extends StatelessWidget {
     final FirestoreService firestoreService = FirestoreService();
     User? currentUser = FirebaseAuth.instance.currentUser;
     
+    void showCommentSection(String docID) {
+      final FocusNode focusNode = FocusNode(); //
+      showModalBottomSheet(
+          context: context,
+          isScrollControlled: true,
+          builder: (BuildContext context) {
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              FocusScope.of(context).requestFocus(focusNode);
+            });
+            return Padding(
+              padding: EdgeInsets.only(
+                bottom: MediaQuery.of(context).viewInsets.bottom + 16,
+              ),
+            child:Container(
+              padding: const EdgeInsets.all(16.0),
+              height: 700,
+              child: Column(
+                children: [
+                  const Text('Comments',
+                      style:
+                          TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                  const Divider(color: Colors.grey, thickness: 1),
+                  // add a light grey line across to separate Comments and the comment section
+                  Expanded(
+                    child: StreamBuilder<QuerySnapshot>(
+                      stream: firestoreService.getCommentsStream(docID),
+                      builder: (context, snapshot) {
+                        if (snapshot.hasData) {
+                          List<DocumentSnapshot> comments = snapshot.data!.docs;
+                          return ListView.builder(
+                            itemCount: comments.length,
+                            itemBuilder: (context, index) {
+                              Map<String, dynamic> commentData = comments[index]
+                                  .data() as Map<String, dynamic>;
+                              Timestamp? createdAt = commentData['timestamp'];
+                              return ListTile(
+                                title: Text(
+                                  commentData['userName'] ?? 'Anonymous',
+                                  style: const TextStyle(
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.bold,
+                                    color: Color.fromARGB(255, 0, 0, 0),
+                                  ),
+                                ),
+                                subtitle: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      commentData['comment'] ?? '',
+                                      style: const TextStyle(
+                                        fontSize: 16
+                                      ),
+                                      ),
+                                    Text(
+                                      createdAt != null ? formatTimestamp(createdAt) : 'just now',
+                                      style: const TextStyle(fontSize: 11, color: Colors.grey),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            },
+                          );
+                        } else if (snapshot.hasError) {
+                          return const Center(
+                              child: Text("Error loading comments"));
+                        } else {
+                          return const Center(
+                              child: CircularProgressIndicator());
+                        }
+                      },
+                    ),
+                  ),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: TextField(
+                          focusNode: focusNode,
+                          decoration: InputDecoration(
+                            hintText: 'Add a comment...',
+                            border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(15)),
+                          ),
+                          onSubmitted: (value) {
+                            if (value.isNotEmpty) {
+                              firestoreService.addComment(docID, value);
+                            }
+                          },
+                        ),
+                      ),
+                    ],
+                  )
+                ],
+              ),
+            )
+            );
+          });
+    }
 
     return StreamBuilder<QuerySnapshot>(
       stream: firestoreService.getNotesStream(),
@@ -24,7 +117,7 @@ class CalendarPage extends StatelessWidget {
           List<DocumentSnapshot> notesList = snapshot.data!.docs;
 
           // displays event details
-          void _showEventDetails(String docID) {
+          void showEventDetails(String docID) {
             DocumentSnapshot document =
                 notesList.firstWhere((note) => note.id == docID);
             Map<String, dynamic> data = document.data() as Map<String, dynamic>;
@@ -45,22 +138,27 @@ class CalendarPage extends StatelessWidget {
               builder: (BuildContext context) {
                 return AlertDialog(
                   title: Text(title),
-                  content: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text('Description: $description'),
-                      Text('Location: $location'),
-                      if (dateParsed != null)
-                        Text(
-                            'Date: ${DateFormat('yyyy-MM-dd').format(dateParsed)}'),
-                      Text('Time: $time'),
-                    ],
+                  content: SingleChildScrollView(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text('Description: $description'),
+                        Text('Location: $location'),
+                        if (dateParsed != null)
+                          Text(
+                              'Date: ${DateFormat('yyyy-MM-dd').format(dateParsed)}'),
+                        Text('Time: $time'),
+                        const SizedBox(height: 16),
+                        //Text('Comments:', style: TextStyle(fontWeight: FontWeight.bold)),
+                        //buildCommentSection(docID),
+                      ],
+                    ),
                   ),
                   actions: <Widget>[
                     TextButton(
                       onPressed: () => Navigator.of(context).pop(),
-                      child: Text('Close'),
+                      child: const Text('Close'),
                     ),
                   ],
                 );
@@ -112,10 +210,11 @@ class CalendarPage extends StatelessWidget {
                 : 0;
 
               return GestureDetector(
-                onTap: () => _showEventDetails(docID),
+                onTap: () => showEventDetails(docID),
                 child: Container(
                 margin:
-                    const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+                    const EdgeInsets.symmetric(
+                      vertical: 8.0, horizontal: 9.0),
                 padding: const EdgeInsets.all(10.0),
                 decoration: BoxDecoration(
                   color: Colors.white,
@@ -125,7 +224,7 @@ class CalendarPage extends StatelessWidget {
                       color: Colors.grey.withOpacity(0.5),
                       spreadRadius: 2,
                       blurRadius: 5,
-                      offset: Offset(0, 3),
+                      offset: const Offset(0, 3),
                     ),
                   ],
                 ),
@@ -138,31 +237,42 @@ class CalendarPage extends StatelessWidget {
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             Text(day,
-                                style: TextStyle(
+                                style: const TextStyle(
                                     fontSize: 18, fontWeight: FontWeight.bold)),
                             //SizedBox(height: 0),
-                            Text(month, style: TextStyle(fontSize: 14)),
+                            Text(month, style: const TextStyle(fontSize: 14)),
                             //SizedBox(height: 0),
-                            Text('$dayOfWeek @$time',
-                                style: TextStyle(fontSize: 11)),
+                            Text(time,
+                                style: const TextStyle(fontSize: 11)),
                           ],
                         ),
                         const SizedBox(width: 16.0),
                         Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(title,
-                                  style: TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.bold)),
-                              Text('Description: $description',
-                                  style: TextStyle(fontSize: 14)),
-                              Text('Location: $location',
-                                  style: TextStyle(fontSize: 14)),
-                            ],
-                          ),
-                        ),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const SizedBox(height: 20.0),
+                                  Text(title,
+                                      style: const TextStyle(
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.bold)),
+                                  Text('Description: $description',
+                                      style: const TextStyle(fontSize: 14)),
+                                  Text(location,
+                                      style: const TextStyle(fontSize: 14)),
+                                  Row(
+                                    verticalDirection: VerticalDirection.down,
+                                    children: [
+                                      IconButton(
+                                        icon: const Icon(Icons.comment),
+                                        iconSize: 15,
+                                        onPressed: () => showCommentSection(docID),
+                                      )
+                                    ],
+                                  )
+                                ],
+                              ),
+                            ),
                         Column(
                           children: [
                             IconButton(
@@ -278,4 +388,20 @@ int _calculateNetVotes(DocumentSnapshot document) {
   int upvotes = data['upvotes'] ?? 0;
   int downvotes = data['downvotes'] ?? 0;
   return upvotes - downvotes;
+}
+
+// Helper function to format the timestamp
+String formatTimestamp(Timestamp timestamp) {
+  DateTime commentTime = timestamp.toDate();
+  Duration difference = DateTime.now().difference(commentTime);
+
+  if (difference.inDays > 0) {
+    return '${difference.inDays}d';
+  } else if (difference.inHours > 0) {
+    return '${difference.inHours}h';
+  } else if (difference.inMinutes > 0) {
+    return '${difference.inMinutes}m';
+  } else {
+    return 'just now'; // or use 'a moment ago' etc.
+  }
 }

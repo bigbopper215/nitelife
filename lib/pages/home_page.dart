@@ -121,7 +121,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
               if (_errorMessage.isNotEmpty)
                 Text(
                   _errorMessage,
-                  style: TextStyle(
+                  style: const TextStyle(
                     color: Colors.red,
                   ),
                 )
@@ -240,7 +240,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
               if (_errorMessage.isNotEmpty)
                 Text(
                   _errorMessage,
-                  style: TextStyle(
+                  style: const TextStyle(
                     color: Colors.red,
                   ),
                 ),
@@ -341,16 +341,15 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                       color: Color.fromARGB(255, 99, 7, 7),
                     ),
                   ),
-              ),
+              ), 
               const SizedBox(width: 10),
-              SizedBox(
-                width: 300,
-                height: 40,
+              Expanded(
                 child: TextField(
                 decoration: InputDecoration(
-                  hintText: 'Search...',
+                  hintText: 'Search events...',
                   fillColor: Colors.white,
                   filled: true,
+                  contentPadding: const EdgeInsets.symmetric(vertical: 12, horizontal: 10),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(5.0),
                     borderSide: BorderSide.none, 
@@ -372,6 +371,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
         ),
         */
         backgroundColor: const Color.fromARGB(255, 99, 7, 7),
+        //backgroundColor: const Color.fromARGB(255, 1, 4, 20),
         //backgroundColor: Color.fromARGB(255, 20, 4, 4),
         /*
         actions: [
@@ -392,7 +392,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
               _appBarCurrentIndex = index;
             });
           },
-          tabs: [
+          tabs: const [
             Tab(text: 'Calendar'),
             Tab(text: 'Popular'),
             Tab(text: 'New'),
@@ -415,6 +415,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
         ? _buildProfilePage()
         : null,
       bottomNavigationBar: BottomNavigationBar(
+        //backgroundColor: Colors.black87,
         currentIndex: _bottomNavCurrentIndex,
         onTap: (int newIndex) {
           if (newIndex == 1) {

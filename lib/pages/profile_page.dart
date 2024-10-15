@@ -20,9 +20,9 @@ class ProfilePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: PreferredSize(
-        preferredSize: Size.fromHeight(40.0), // Set the height you want
+        preferredSize: const Size.fromHeight(40.0), // Set the height you want
         child: AppBar(
-          backgroundColor: Color.fromARGB(255, 99, 7, 7),
+          backgroundColor: const Color.fromARGB(255, 99, 7, 7),
           title: const Row(
             children: [
               SizedBox(width: 8),
@@ -40,14 +40,14 @@ class ProfilePage extends StatelessWidget {
           centerTitle: false,
           actions: [
             IconButton(
-              icon: Icon(
+              icon: const Icon(
                 Icons.settings,
                 ),
               onPressed: () {
                 // Navigate to the settings page
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => SettingsPage()),
+                  MaterialPageRoute(builder: (context) => const SettingsPage()),
                 );
               },
             ),
@@ -58,11 +58,11 @@ class ProfilePage extends StatelessWidget {
         future: _fetchUserData(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
+            return const Center(child: CircularProgressIndicator());
           } else if (snapshot.hasError) {
-            return Center(child: Text('Error fetching user data'));
+            return const Center(child: Text('Error fetching user data'));
           } else if (!snapshot.hasData || snapshot.data == null) {
-            return Center(child: Text('No user data found'));
+            return const Center(child: Text('No user data found'));
           }
 
           String username = snapshot.data!['username'] ?? 'No Username';
@@ -80,7 +80,7 @@ class ProfilePage extends StatelessWidget {
                 child: CircleAvatar(
                   radius: 50, // Adjust radius to your preference
                   backgroundColor: Colors.grey[300], // Set background color for blank profile picture
-                  child: Icon(
+                  child: const Icon(
                     Icons.person,
                     size: 50, // Adjust icon size to your preference
                     color: Colors.white, // Icon color
@@ -96,9 +96,9 @@ class ProfilePage extends StatelessWidget {
                   children: [
                     Text(
                       username,
-                      style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.black),
+                      style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.black),
                     ),
-                    SizedBox(height: 8),
+                    const SizedBox(height: 8),
                     // Add more profile details or actions here
                   ],
                 ),
