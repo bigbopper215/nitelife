@@ -1,8 +1,5 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
-import 'package:nite_life/services/firestore.dart';
 
 class SettingsPage extends StatelessWidget {
   const SettingsPage({super.key});
@@ -67,12 +64,32 @@ class SettingsPage extends StatelessWidget {
                 fontWeight: FontWeight.bold,
               ),
             ),
-            const SizedBox(height: 5),
             Container(
-              padding:
-                  const EdgeInsets.symmetric(vertical: 4.0, horizontal: 16.0),
+              //padding:
+                  //const EdgeInsets.symmetric(vertical: 1.0, horizontal: 16.0),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: Colors.grey.shade200,
+                borderRadius: BorderRadius.circular(10.0),
+              ),
+              child: Row(
+                children: [
+                  IconButton(
+                    onPressed: (){
+                      //_deleteAccount(context);
+                      }, 
+                    icon: const Icon(Icons.person)),
+                  const Text(
+                    'Edit Profile',
+                  )
+                ],
+              ),
+            ),
+            const SizedBox(height: 4.0),
+            Container(
+              //padding:
+                 // const EdgeInsets.symmetric(vertical: 1.0, horizontal: 10.0),
+              decoration: BoxDecoration(
+                color: Colors.grey.shade200,
                 borderRadius: BorderRadius.circular(10.0),
               ),
               child: Row(
@@ -87,12 +104,12 @@ class SettingsPage extends StatelessWidget {
                 ],
               ),
             ),
-            const SizedBox(height: 7.5),
+            const SizedBox(height: 4.0),
             Container(
-              padding:
-                  const EdgeInsets.symmetric(vertical: 4.0, horizontal: 16.0),
+              //padding:
+                  //const EdgeInsets.symmetric(vertical: 1.0, horizontal: 16.0),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: Colors.grey.shade200,
                 borderRadius: BorderRadius.circular(10.0),
               ),
               child: Row(
@@ -104,6 +121,172 @@ class SettingsPage extends StatelessWidget {
                     icon: const Icon(Icons.delete)),
                   const Text(
                     'Delete Account',
+                  )
+                ],
+              ),
+            ),
+            const SizedBox(height: 4.0),
+            const Text(
+              'Preferences',
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 4.0),
+
+            /*
+            THEME
+            be able to switch between light and dark theme
+             */
+            Container(
+              decoration: BoxDecoration(
+                color: Colors.grey.shade200,
+                borderRadius: BorderRadius.circular(10.0),
+              ),
+              child: Row(
+                children: [
+                  IconButton(
+                    onPressed: (){
+                      //_deleteAccount(context);
+                      }, 
+                    icon: const Icon(Icons.toggle_off)),
+                  const Text(
+                    'Theme',
+                  )
+                ],
+              ),
+            ),
+            const SizedBox(height: 4.0),
+            Container(
+              //padding:
+                  //const EdgeInsets.symmetric(vertical: 1.0, horizontal: 16.0),
+              decoration: BoxDecoration(
+                color: Colors.grey.shade200,
+                borderRadius: BorderRadius.circular(10.0),
+              ),
+              child: Row(
+                children: [
+                  IconButton(
+                    onPressed: (){
+                      //_deleteAccount(context);
+                      }, 
+                    icon: const Icon(Icons.notifications)),
+                  const Text(
+                    'Notifications',
+                  )
+                ],
+              ),
+            ),
+            const SizedBox(height: 4.0),
+            const Text(
+              'Support',
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 4.0),
+            Container(
+              //padding:
+                  //const EdgeInsets.symmetric(vertical: 1.0, horizontal: 16.0),
+              decoration: BoxDecoration(
+                color: Colors.grey.shade200,
+                borderRadius: BorderRadius.circular(10.0),
+              ),
+              child: Row(
+                children: [
+                  IconButton(
+                    onPressed: (){
+                      //_deleteAccount(context);
+                      }, 
+                    icon: const Icon(Icons.people)),
+                  const Text(
+                    'Privacy Policy',
+                  )
+                ],
+              ),
+            ),
+            const SizedBox(height: 4.0),
+            Container(
+              //padding:
+                  //const EdgeInsets.symmetric(vertical: 1.0, horizontal: 16.0),
+              decoration: BoxDecoration(
+                color: Colors.grey.shade200,
+                borderRadius: BorderRadius.circular(10.0),
+              ),
+              child: Row(
+                children: [
+                  IconButton(
+                    onPressed: (){
+                      //_deleteAccount(context);
+                      }, 
+                    icon: const Icon(Icons.policy)),
+                  const Text(
+                    'Terms of Service',
+                  )
+                ],
+              ),
+            ),
+            const SizedBox(height: 4.0),
+            Container(
+              //padding:
+                  //const EdgeInsets.symmetric(vertical: 1.0, horizontal: 16.0),
+              decoration: BoxDecoration(
+                color: Colors.grey.shade200,
+                borderRadius: BorderRadius.circular(10.0),
+              ),
+              child: Row(
+                children: [
+                  IconButton(
+                    onPressed: (){
+                      //_deleteAccount(context);
+                      }, 
+                    icon: const Icon(Icons.handyman)),
+                  const Text(
+                    'Community Guidelines',
+                  )
+                ],
+              ),
+            ),
+            const SizedBox(height: 4.0),
+            Container(
+              //padding:
+                  //const EdgeInsets.symmetric(vertical: 1.0, horizontal: 16.0),
+              decoration: BoxDecoration(
+                color: Colors.grey.shade200,
+                borderRadius: BorderRadius.circular(10.0),
+              ),
+              child: Row(
+                children: [
+                  IconButton(
+                    onPressed: (){
+                      //_deleteAccount(context);
+                      }, 
+                    icon: const Icon(Icons.question_mark_rounded)),
+                  const Text(
+                    'FAQ',
+                  )
+                ],
+              ),
+            ),
+            const SizedBox(height: 4.0),
+            Container(
+              //padding:
+                  //const EdgeInsets.symmetric(vertical: 1.0, horizontal: 16.0),
+              decoration: BoxDecoration(
+                color: Colors.grey.shade200,
+                borderRadius: BorderRadius.circular(10.0),
+              ),
+              child: Row(
+                children: [
+                  IconButton(
+                    onPressed: (){
+                      //_deleteAccount(context);
+                      }, 
+                    icon: const Icon(Icons.mail)),
+                  const Text(
+                    'Contact Us',
                   )
                 ],
               ),

@@ -177,8 +177,6 @@ class FirestoreService {
 
       String userName = userDoc['username'] ?? 'Anonymous'; // Fallback if username not found
 
-      //String username = snapshot.data!['username'] ?? 'No Username';
-
       await FirebaseFirestore.instance
         .collection('notes')
         .doc(docID)

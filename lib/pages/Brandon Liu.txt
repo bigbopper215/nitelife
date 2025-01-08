@@ -1,0 +1,109 @@
+Brandon Liu
+395 Robotics
+Falcone
+Paper Review Notes
+
+
+Aim for 1000 words
+https://moodle.vassar.edu/pluginfile.php/1213713/course/section/503730/s43154-020-00010-9.pdf
+Societal and Ethical Issues in HRI
+
+Introduction:
+Summary - purpose, scope, main objectives
+Context of the research
+Overall impression of the paper
+
+Reading Notes
+
+Introduction:
+Researchers need to address the societal and ethical impact associated with the introduction of (social) robots into our everyday lives
+The authors are expecting social robots to become increasingly prevalent until one day they will be as common as home computers are now
+Roboethics or robot ethics incorporate “ethical questions about how humans should design, deploy, and treat robots”
+Little research on ethics and HRI currently however a lot on ethics and robotics 
+They focus on the last five years of research on ethical and societal issues in the field of HRI
+Areas of Robot Use, and General Ethical Challenges Associated with Robot Deployment
+This section discusses the different areas where robots are utilized and the ethical dilemmas that arise from their integration into society
+First paragraph - examples of where robots are used, automotive industry, military, search and rescue, assistants in home environments 
+2P - ethical challenges of uncertainty and responsibility
+Uncertainty refers to user uncertainty concerning laws and regulations of robot use
+Responsibility - who is responsible for damages caused by robots, who regulates or holds responsibility when humans interact with robots
+Robot acceptance and robot usability are deemed less ethically relevant issues compared with concrete fears of potential end users
+Fear that robots will take over jobs
+In some industries, robot technology is not advanced enough to replace human labor such as therapy
+Fear of excessive use of robot assistance and we will become to reliant on them
+Research on ELS issues especially in the last five years, examined the aspects law and liability, privacy and (data_ security issues
+Consent for HRI, there must be an opportunity to consent to HRI in public spaces
+Robot morals, mixed opinions on whether robots can be moral
+HRI-Specific Ethical Challenges
+Discrimination of users and robots, dehumanization of users, and deception by robots
+Robots that are programmed by humans will have the same biases that are known to cause problems in human-human interactions
+Robots may embody discrimination through their design
+Robots will ultimately replace human social relationships, resulting in dehumanization of the human (elderly) user by society
+De Graaf argues that in a society in which robots are a matter of course humans’ social skills and willingness to “deal with the complexity of real human relationships” might decrease
+Discrimination, dehumanization, deception
+Wilson suggests the following ethical issues are particularly relevant for social robots: a respect for social norms, the robot being able to make decisions about competing obligations, building and maintaining trust between robot and user, the potential problem of social manipulation and deception by the robot, and the issue of blam and justification, especially if something goes wrong
+Building and maintaining trust between robots and users is important for socially assistive robots 
+On the topic of robot rights, literature on this topic examines and discusses behavior towards robots, robot rights, and the question of whether ethics apply to robots at all
+They recommend reading another article since this topic is vast enough to require its own literature review
+Sensitive Areas of Robot Deployment and Associated Ethical Challenges
+There are some areas of robot deployment that are more ethically sensitive than others such as warfare, sexual pleasure, or to care for vulnerable target groups
+Mentions Andreas Philosopher Robert Sparrow
+Cites Manzeschke, Kortner, Zwijsen
+Authors propose for different uses of robots in elderly care
+“Fore a more general discussion on ethical aspects of telepresence robots, we recommend” they do this several times 
+Ethical Frameworks, Guidelines, and Their Implementation into Robots
+The frameworks and guidelines range from very broad theoretical discussion on the topic of ethics to detailed suggestions for concrete algorithms necessary for robots to behave in ethical ways
+A lot of recommendations to read other papers
+It may be critically discussed whether an implementation of ethics in the form of algorithms is feasible, or even possible
+
+How to review a scientific paper?
+Understand the Scope: Read the abstract to grasp the study’s purpose, methods, and significance.
+		This paper is an overview of the literature on the societal and ethical issues in human-robot interaction (HRI). Due to the author’s belief that robots will become heavily integrated into human society in the future, they want to discuss the societal and ethical issues that will eventually arise with robotics. The authors highlight the key issues and debates from the literature in the past five years in hopes of inspiring researchers, developers, and stakeholders into further discussions.The authors believe that similar to the adoption of home computers, robots will be widely adopted in domestic and social settings in the future. As robots become integrated into our everyday lives it is important to highlight the potential ethical challenges we will face. There are a variety of areas where robots can be deployed in such as the automotive industry, military, search-and-rescue tasks, healthcare, home environments, and even sexual services. Each of these areas have their ethical challenges where there are two so-called “meta-challenges”: uncertainty and responsibility. Uncertainty refers to the potential legal and social issues of robots due to the lack of regulation and laws. Responsibility refers to the issue of who is responsible for human-robot interactions. The autonomous features of robots has caused debates among authors who claim that humans need to be held responsible for the robot’s actions regardless of how autonomously independent they are. There are many ethical challenges that may occur during human-robot interaction. Robots programmed by humans could inherit the same biases that humans have leading towards discrimination. Robots also have the possibility of replacing human relationships. With these ethical challenges it raises the question of whether robots have rights or not and if ethics apply to robots at all. The deployment of robots in different fields introduces domain-specific ethical challenges with different levels of sensitivity regarding ethics. Because of these differences the authors note that there must be frameworks and guidelines for robots to behave in ethical ways.
+
+The introduction introduces(choose a different word) the topic of robots and ethics by comparing robots to computers and how the use of robots will increase just like computers did. By providing data on the current market use of robotics it is clear that there is a lot of room for robotics to become integrated into our everyday lives. The authors claim that domestic robots will become as common as home computers are now. Although I do believe this statement is true to some extent where robots will become common, I am uncertain that this is a fair claim due to the different roles robots and home computers play. The introduction provides context to the rise of robotics and the ethical challenges that will need to be further discussed. Although there is no specific research question the authors propose, it is clear that the topic is of robots and their ethical challenges that call for discussion. In terms of methodology this paper is a review on recent literature so there is no methodology section however it would be interesting to see their process of researching this topic and how they found their cited works. This paper is split into these different sections: areas of robot use, and general ethical challenges associated with robot deployment; sensitive areas of robot deployment and associated ethical challenges; ethical frameworks, guidelines, and their implementation into robots; and finally summary and conclusion. Due to the way the paper is structured it first gives context to robots by describing where robots are used. After giving context to robots the authors describe where ethical challenges arise during human-robot interaction and how there are different ethical challenges in different areas. Next, the authors discuss the literature on the frameworks and guidelines towards implementing robots and the possible solutions to avoid the ethical challenges. This provides a clear understanding of the societal and ethical issues in human-robot interaction and what people should be aware of as robots become integrated into our lives. The authors have a large list of works cited with many papers coming from different parts of the world. This allows a greater understanding of how robots may impact humans and prevents any bias from only doing research in a centralized location. Overall this paper does a good job of raising awareness about this topic and creates further curiosity into the right direction by guiding the reader to where they can do further research. 
+
+
+
+
+
+
+TODO: Finish a short summary of the paper by going through each section and providing a brief of summary, then do analysis and evaluation
+	
+Evaluate the Introduction: Assess if it provides clear background information, states the research question, and justifies its importance.
+Introduction Notes:
+Researchers need to address the societal and ethical impact associated with the introduction of (social) robots into our everyday lives
+The authors are expecting social robots to become increasingly prevalent until one day they will be as common as home computers are now
+Roboethics or robot ethics incorporate “ethical questions about how humans should design, deploy, and treat robots”
+Little research on ethics and HRI currently however a lot on ethics and robotics 
+They focus on the last five years of research on ethical and societal issues in the field of HRI
+They state how the current market for personal domestic, and service robots, or social robots for entertainments is small, although they claim it is continuously growing
+They claim that domestic and social robots will become “increasingly prevalent, until one day, robots at home will be as common as home computers are now”
+Not sure if this is a fair claim, robots and computers have different uses
+Defines what ethics and roboethics are
+The introduction talks about how robots will become more prevalent in our lives and provides definitions of what roboethics is, which is the main focus of the paper. The authors tells us how there is a vast amount of literature on ethics in human-robot interaction and will provide a glimpse into the “most recent issues and debates. We do so by focusing on the last five years of research on ethical and societal issues in the field of HRI
+There is not necessarily a research question that the authors propose but a need for discussion of ethics in human-robot interaction. Should they have a research question?
+
+The introduction introduces(choose a different word) the topic of robots and ethics by comparing robots to computers and how the use of robots will increase just like computers did. By providing data on the current market use of robotics it is clear that there is a lot of room for robotics to become integrated into our everyday lives. The authors claim that domestic robots will become as common as home computers are now. Although I do believe this statement is true to some extent where robots will become common, I do not believe robots will become as 
+
+
+
+
+
+Examine the Methods: Check if the methodology is well-described, appropriate, and reproducible. Look for any gaps or unclear details.
+
+No methodology section since this is just an overview on recent literature. It would be interesting to see how they found the papers they cited. This paper is sectioned by introduction; areas of robot use, and general ethical challenges associated with robot deployment; HRI-Specific Ethical Challenges; Sensitive Areas of Robot Deployment and Associated Ethical Challenges; Ethical Frameworks, Guidelines, and Their Implementation into Robots; Summary and Conclusion
+
+
+Analyze the Results: Ensure results are clearly presented (e.g., through tables, figures) and align with the study’s objectives. Verify if statistical methods are applied correctly.
+Assess the Discussion: Determine whether the discussion interprets results appropriately, acknowledges limitations, and connects findings to the broader field.
+Check References: Review the accuracy and relevance of cited works to ensure they
+support the study.
+They do have a ton of cited works, 138 to be exact.
+Clarity and Organization: Evaluate the writing for clarity, logical flow, and adherence to
+journal guidelines.
+Originality and Impact: Judge the novelty of the research and its contribution to the
+field.
+Provide Constructive Feedback: Highlight strengths, point out weaknesses, and suggest
+improvements respectfully and specifically.
+10. Conclude Your Review: Summarize your overall impression, stating whether the paper
+is suitable for publication and under what conditions (e.g., minor/major revisions).

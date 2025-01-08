@@ -1,9 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:nite_life/pages/settings_page.dart';
-import 'package:nite_life/services/firestore.dart';
 
 
 class ProfilePage extends StatelessWidget {

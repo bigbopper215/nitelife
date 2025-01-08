@@ -24,11 +24,11 @@ class PopularPage extends StatelessWidget {
             });
             return Padding(
               padding: EdgeInsets.only(
-                bottom: MediaQuery.of(context).viewInsets.bottom + 16,
+                bottom: MediaQuery.of(context).viewInsets.bottom + 10,
               ),
-            child:Container(
+            child: Container(
               padding: const EdgeInsets.all(16.0),
-              height: 700,
+              height: MediaQuery.of(context).size.height * 0.65,
               child: Column(
                 children: [
                   const Text('Comments',
@@ -49,14 +49,27 @@ class PopularPage extends StatelessWidget {
                                   .data() as Map<String, dynamic>;
                               Timestamp? createdAt = commentData['timestamp'];
                               return ListTile(
-                                title: Text(
-                                  commentData['userName'] ?? 'Anonymous',
-                                  style: const TextStyle(
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.bold,
-                                    color: Color.fromARGB(255, 0, 0, 0),
-                                  ),
+                                title: Row(
+                                  children: [
+                                    Text(
+                                      commentData['userName'] ?? 'Anonymous',
+                                      style: const TextStyle(
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.bold,
+                                        color: Color.fromARGB(255, 0, 0, 0),
+                                      ),
+                                    ),
+                                    Text(
+                                      "  "
+                                    ),
+                                    Text(
+                                      createdAt != null ? formatTimestamp(createdAt) : 'just now',
+                                      style: const TextStyle(fontSize: 11, color: Color.fromRGBO(128, 128, 128, 1.0)),
+                                    ),
+                                  ]
                                 ),
+
+                                
                                 subtitle: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
@@ -65,10 +78,12 @@ class PopularPage extends StatelessWidget {
                                       style: const TextStyle(
                                         fontSize: 16
                                       ),
-                                      ),
+                                    ),
                                     Text(
-                                      createdAt != null ? formatTimestamp(createdAt) : 'just now',
-                                      style: const TextStyle(fontSize: 11, color: Colors.grey),
+                                      "Reply",
+                                      style: const TextStyle(
+                                        fontSize: 10
+                                      ),
                                     ),
                                   ],
                                 ),
@@ -93,13 +108,13 @@ class PopularPage extends StatelessWidget {
                           decoration: InputDecoration(
                             hintText: 'Add a comment...',
                             border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(15)),
+                                borderRadius: BorderRadius.circular(10)),
                           ),
                           onSubmitted: (value) {
                             if (value.isNotEmpty) {
                               firestoreService.addComment(docID, value);
                             }
-                          },
+                          }, 
                         ),
                       ),
                     ],

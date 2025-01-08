@@ -4,7 +4,6 @@ import 'package:nite_life/components/my_button.dart';
 import 'package:nite_life/components/my_textfield.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:nite_life/pages/home_page.dart';
-import '../helper/helper_functions.dart';
 
 class RegisterPage extends StatefulWidget {
   final void Function()? onTap;
